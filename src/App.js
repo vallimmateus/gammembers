@@ -1,16 +1,37 @@
-import "./App.css";
-import Perfil from "./images/Fotos.png";
+import React, { Component } from "react";
+import LoginPage from "./pages/Login";
+import Home from "./pages/Home";
 
-function App() {
-	return (
-		<div className="Container">
-			<div className="InContainer">
-				<img src={Perfil} className="Perfil" alt="perfil" />
-				<p>Email USP</p>
-				<input />
-			</div>
-		</div>
-	);
+import fire from "./config/fire";
+
+class App extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			user: null,
+		};
+
+		this.authListener = this.authListener.bind(this);
+	}
+
+	componentDidMount() {
+		this.authListener();
+	}
+
+	authListener() {
+		fire.auth().onAuthStateChanged((user) => {
+			if (user) {
+				this.setState({ user });
+			} else {
+				this.setState({ user: null });
+			}
+		});
+	}
+
+	render() {
+		return <div>{this.state.user ? <Home /> : <LoginPage />}</div>;
+	}
 }
 
 export default App;
