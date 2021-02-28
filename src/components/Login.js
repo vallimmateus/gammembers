@@ -1,5 +1,6 @@
 import React from "react";
 import fire from "../config/fire";
+import { TextField, Button } from "@material-ui/core";
 
 function Login() {
 	function login() {
@@ -28,34 +29,29 @@ function Login() {
 	}
 
 	return (
-		<div>
-			<div>
-				Email USP
-				<input id="email" placeholder="Enter email..." type="email" />
-			</div>
-			<div>
-				Senha
-				<input
-					id="password"
-					placeholder="Enter password..."
-					type="password"
-				/>
-			</div>
-			<label>
-				<button className="Button" onClick={login}>
-					Login
-				</button>
-			</label>
-			<label>
-				<button className="Button" onClick={signUp}>
-					Sign Up
-				</button>
-			</label>
-			<label>
-				<input type="checkbox" />
-				Mantenha-me conectado
-			</label>
-		</div>
+		<form>
+			<TextField
+				id="email"
+				label="Enter USP"
+				type="email"
+				required
+				helperText="email@usp.br"
+				fullWidth
+			/>
+			<TextField
+				id="password"
+				label="Senha"
+				type="password"
+				required
+				fullWidth
+			/>
+			<Button variant="outlined" onClick={login}>
+				Login
+			</Button>
+			<Button variant="outlined" onClick={signUp}>
+				Sign Up
+			</Button>
+		</form>
 	);
 }
 
