@@ -24,8 +24,23 @@
 	width: 250px;
 }
 
+.InContainer div {
+	width: 100%;
+}
+
 form {
+	margin-top: 40px;
 	width: 100%;
 	display: flex;
 	flex-direction: column;
+}
+
+button {
+	width: 70%;
+	margin-left: 15% !important;
+	margin-top: 20px !important;
+}
+
+form button {
+	margin-top: 40px !important;
 }

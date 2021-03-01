@@ -14,20 +14,6 @@ function Login() {
 			});
 	}
 
-	function signUp() {
-		const email = document.querySelector("#email").value;
-		const password = document.querySelector("#password").value;
-
-		fire.auth()
-			.createUserWithEmailAndPassword(email, password)
-			.then((u) => {
-				alert("Successfully Signed up");
-			})
-			.catch((err) => {
-				alert(err.toString());
-			});
-	}
-
 	return (
 		<form>
 			<TextField
@@ -35,7 +21,6 @@ function Login() {
 				label="Enter USP"
 				type="email"
 				required
-				helperText="email@usp.br"
 				fullWidth
 			/>
 			<TextField
@@ -47,9 +32,6 @@ function Login() {
 			/>
 			<Button variant="outlined" onClick={login}>
 				Login
-			</Button>
-			<Button variant="outlined" onClick={signUp}>
-				Sign Up
 			</Button>
 		</form>
 	);
