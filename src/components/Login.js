@@ -30,7 +30,8 @@ function Login() {
 				required
 				fullWidth
 			/>
-			<Button variant="outlined" onClick={login}>
+			<Button className="esqueceu">Esqueceu sua senha?</Button>
+			<Button className="login" variant="outlined" onClick={login}>
 				Login
 			</Button>
 		</form>

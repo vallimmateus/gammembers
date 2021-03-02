@@ -10,6 +10,7 @@ const theme = createMuiTheme({
 		primary: { main: "#1fddbd" },
 		secondary: { main: "#212121" },
 	},
+	typography: { fontFamily: "montserrat" },
 });
 
 ReactDOM.render(

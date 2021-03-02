@@ -1,21 +1,34 @@
 import React from "react";
-import fire from "../config/fire";
+// import fire from "../config/fire";
 import { TextField, Button } from "@material-ui/core";
+import { members } from "../config/fire";
 
 function SignUp() {
 	function signUp() {
 		const email = document.querySelector("#email").value;
 		if (email.endsWith("@usp.br")) {
-			const password = document.querySelector("#password").value;
+			console.log(
+				"0: ",
+				members
+					.where("emailUsp", "==", email)
+					.get()
+					.then((querySnapshot) => {
+						querySnapshot.forEach((doc) => {
+							return doc.data().nome;
+						});
+					})
+			);
 
-			fire.auth()
-				.createUserWithEmailAndPassword(email, password)
-				.then((u) => {
-					alert("Successfully Signed up");
-				})
-				.catch((err) => {
-					alert(err.toString());
-				});
+			// const password = document.querySelector("#password").value;
+
+			// fire.auth()
+			// 	.createUserWithEmailAndPassword(email, password)
+			// 	.then((u) => {
+			// 		alert("Successfully Signed up");
+			// 	})
+			// 	.catch((err) => {
+			// 		alert(err.toString());
+			// 	});
 		}
 	}
 
@@ -50,13 +63,13 @@ function SignUp() {
 				fullWidth
 			/>
 			<TextField
-				id="password"
+				id="password2"
 				label="Confirme a senha"
 				type="password"
 				required
 				fullWidth
 			/>
-			<Button variant="outlined" onClick={signUp}>
+			<Button className="login" variant="outlined" onClick={signUp}>
 				Sign Up
 			</Button>
 		</form>
