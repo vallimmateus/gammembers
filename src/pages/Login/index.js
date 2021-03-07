@@ -3,8 +3,8 @@ import "./style.css";
 import Perfil from "../../images/Fotos.png";
 import Login from "../../components/Login";
 import SignUp from "../../components/SignUp";
-import { Button, makeStyles } from "@material-ui/core";
-import { getMemberByEmail } from "../../config/fire";
+import { Button, makeStyles, IconButton } from "@material-ui/core";
+import { ArrowBack } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -63,6 +63,18 @@ const useStyles = makeStyles((theme) => ({
 			backgroundColor: "unset",
 			color: "#212121",
 		},
+		"& button.back": {
+			position: "absolute",
+			top: "20px",
+			left: "20px",
+			width: "auto",
+			minWidth: "unset",
+			marginTop: "unset",
+			fontSize: "unset",
+			boxShadow: "unset",
+			borderRadius: "50%",
+		},
+		"& .signUp form button": { marginTop: "57px" },
 	},
 }));
 
@@ -73,7 +85,7 @@ function LoginPage() {
 	let miniPage;
 	if (comp === "Login") {
 		miniPage = (
-			<div>
+			<div className="login">
 				<Login />
 				<Button
 					className="signUp neumorph"
@@ -88,25 +100,16 @@ function LoginPage() {
 		);
 	} else if (comp === "Sign Up") {
 		miniPage = (
-			<div>
+			<div className="signUp">
 				<SignUp />
-				<Button
-					variant="outlined"
+				<IconButton
+					className="back"
 					onClick={() => {
 						setComp("Login");
 					}}
 				>
-					Voltar
-				</Button>
-				{/* <Button
-					onClick={() => {
-						getMemberByEmail(
-							document.querySelector("#email").value
-						);
-					}}
-				>
-					Teste
-				</Button> */}
+					<ArrowBack fontSize="default" />
+				</IconButton>
 			</div>
 		);
 	}

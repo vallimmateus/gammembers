@@ -1,0 +1,262 @@
+div.parent {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+header.containerHome,
+div.containerHome {
+	background-color: #212121;
+	color: #fff;
+}
+
+h1,
+h2,
+h3,
+p {
+	margin: 0;
+}
+
+.neumorphic {
+	box-shadow: -4px -4px 10px rgba(248, 248, 248, 0.08),
+		4px 4px 10px rgba(0, 0, 0, 0.75);
+	border-radius: 20px;
+}
+
+header {
+	width: 100%;
+	height: 163px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+header .user {
+	padding-top: 40px;
+	padding-left: 57px;
+	display: flex;
+	flex-direction: row;
+}
+
+header .user div,
+header .user div p {
+	margin: 0;
+}
+
+header .user div {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	margin-left: 30px;
+}
+
+header .Perfil {
+	height: 100px;
+	width: auto;
+}
+
+header .user p {
+	color: #fff;
+}
+
+header .user p:last-of-type {
+	font-size: 2em;
+	font-weight: 800;
+}
+
+header .metas {
+	display: flex;
+	flex-direction: row;
+	height: 178px;
+	width: 925px;
+	overflow: hidden;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+header .metas div {
+	position: relative;
+}
+
+header .metas div p,
+header .metas div h1,
+header .metas div div {
+	position: absolute;
+	z-index: 1;
+	color: #fff;
+	margin: 0;
+	transform: skewX(28deg);
+}
+
+header > svg {
+	position: absolute;
+	right: 0;
+	z-index: 0;
+}
+
+.meta {
+	margin-left: 45px;
+	height: 122px;
+	width: 178px;
+	transform: skewX(-28deg);
+}
+
+.meta:nth-of-type(1) {
+	margin-left: 90px;
+}
+
+.meta h1 {
+	font-size: 20px;
+}
+
+.meta p:first-of-type {
+	font-size: 18px;
+}
+
+.meta p {
+	font-size: 14px;
+}
+
+.meta h1:nth-of-type(2) {
+	top: 27px;
+}
+
+.meta p:nth-of-type(1) {
+	top: 52px;
+}
+
+.meta p:nth-of-type(2) {
+	top: 70px;
+	right: 0;
+}
+
+.meta div.chart {
+	top: 92px;
+	width: 100%;
+	height: 10px;
+	transform: skewX(0);
+	border: 1px solid #ffffff;
+}
+
+.meta div.chart div {
+	background-color: #1fddbd;
+	height: 100%;
+	transform: skewX(0deg);
+}
+
+.meta:nth-of-type(1) .chart div {
+	width: 77.4%;
+}
+
+.meta:nth-of-type(2) .chart div {
+	width: 90%;
+}
+
+.meta:nth-of-type(3) .chart div {
+	width: 100%;
+}
+
+.meta p:nth-of-type(3) {
+	bottom: 0;
+	right: 0;
+}
+
+div.containerHome {
+	flex: 1;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	padding: 25px;
+}
+
+div.containerHome button {
+	position: absolute;
+}
+
+div.containerHome > div {
+	margin: 25px;
+	padding: 30px;
+	font-size: 1em;
+}
+
+div.my-ativ {
+	width: 350px;
+}
+
+div.jornal {
+	flex: 1;
+	height: 100%;
+	max-height: 450px;
+}
+
+div.meets {
+	width: 30vw;
+	height: 30vw;
+}
+
+div.my-ativ ul {
+	margin: 0;
+	padding: 0;
+	margin-top: 30px;
+}
+
+div.my-ativ ul li {
+	list-style: none;
+	display: inline-block;
+	height: 75px;
+	cursor: pointer;
+	transition: height 400ms;
+}
+
+div.miniheader {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+li div.miniheader > * {
+	position: absolute;
+}
+
+div.miniheader h2.nome {
+	font-size: 22px;
+	top: 12px;
+}
+
+div.miniheader p.area {
+	font-size: 16px;
+	color: #888;
+	top: 40px;
+	left: 17px;
+}
+
+div.miniheader p.prazo {
+	font-size: 12px;
+	color: #888;
+	text-align: end;
+	right: 5px;
+	top: 53px;
+}
+
+div.my-ativ li div.content {
+	overflow: hidden;
+	max-height: 0;
+	transition: max-height 400ms;
+}
+
+div.my-ativ li.active div.content {
+	max-height: 100%;
+}
+
+div.my-ativ li span.openIcon {
+	right: 0;
+	padding: 0;
+	color: #fff;
+	transform: rotate(-90deg) scale(0.75);
+	transition: transform 400ms;
+}
+
+div.my-ativ li.active span.openIcon {
+	transform: rotate(90deg) scale(1);
+}
