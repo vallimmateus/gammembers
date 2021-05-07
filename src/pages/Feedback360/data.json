@@ -1,0 +1,26 @@
+[
+	{
+		"team": "Diretório A",
+		"respondidos": 1,
+		"total": 2,
+		"pessoas": [
+			"Pessoa A", "Pessoa B"
+		]
+	},
+	{
+		"team": "Projeto D",
+		"respondidos": 0,
+		"total": 2,
+		"pessoas": [
+			"Pessoa C", "Pessoa D"
+		]
+	},
+	{
+		"team":"Núcleo E",
+		"respondidos": 3,
+		"total": 4,
+		"pessoas": [
+			"Pessoa B", "Pessoa C", "Pessoa E", "Pessoa F"
+		]
+	}
+]

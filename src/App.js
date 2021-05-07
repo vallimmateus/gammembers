@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import LoginPage from "./pages/Login";
-import Home from "./pages/Home";
+// import Home from "./pages/Home";
+import Feedback from "./pages/Feedback360";
 
 import fire from "./config/fire";
 
@@ -30,7 +31,16 @@ class App extends Component {
 	}
 
 	render() {
-		return <div>{this.state.user ? <Home /> : <LoginPage />}</div>;
+		return (
+			<div
+				style={{
+					width: "100vw",
+					height: "100vh",
+				}}
+			>
+				{this.state.user ? <Feedback /> : <LoginPage />}
+			</div>
+		);
 	}
 }
 

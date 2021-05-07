@@ -6,7 +6,7 @@ import Logout from "../../components/Logout";
 import firebase from "firebase";
 import { Icon } from "@material-ui/core";
 import { ArrowBackIos } from "@material-ui/icons";
-const myAtiv = require("./my-ativ.json");
+import myAtiv from "./my-ativ.json";
 
 function Home() {
 	var user = firebase.auth().currentUser;

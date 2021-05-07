@@ -1,0 +1,277 @@
+import React from "react";
+import "./style.css";
+import Perfil from "../../images/Fotos.png";
+// import Ambev from "../../images/logo-ambev-branca-2048.png";
+import Logout from "../../components/Logout";
+import ProgressBar from "../../components/ProgressBar";
+import firebase from "firebase";
+import Dots from "./Dots";
+// import { CircularProgress } from "@material-ui/core";
+import data from "./data.json";
+
+function Feedback() {
+	var user = firebase.auth().currentUser;
+
+	if (user) {
+		function Top() {
+			return data.map((e) => {
+				var i;
+				var dots = [];
+				for (i = 0; i < e.respondidos; i++) {
+					dots.push(<Dots active />);
+				}
+				for (i = 0; i < e.total - e.respondidos; i++) {
+					dots.push(<Dots />);
+				}
+				return (
+					<tr key={Math.random()}>
+						<td>
+							<p>{e.team}</p>
+						</td>
+						<td>{dots}</td>
+					</tr>
+				);
+			});
+		}
+
+		function Teams() {
+			return data.map((e) => {
+				return (
+					<li
+						onClick={() => {
+							changeList(data.indexOf(e));
+						}}
+						id={data.indexOf(e)}
+						className={data.indexOf(e) === 0 ? "active" : ""}
+					>
+						{e.team}
+					</li>
+				);
+			});
+		}
+
+		function List(i) {
+			return data[i].pessoas.map((e) => {
+				return;
+			});
+		}
+
+		return (
+			<div
+				className="parent"
+				style={{
+					backgroundColor: "#212121",
+					display: "flex",
+					flexDirection: "column",
+					width: "100%",
+					height: "100%",
+				}}
+			>
+				<header>
+					<div className="user">
+						<img src={Perfil} className="Perfil" alt="perfil" />
+						<div>
+							<p>Bom dia, {user.displayName}</p>
+						</div>
+					</div>
+					<Logout />
+				</header>
+				<div className="container">
+					<div>
+						<div className="top">
+							<div
+								className="neumorphic"
+								style={{
+									display: "flex",
+									flexDirection: "row",
+									flex: "1",
+								}}
+							>
+								<ProgressBar
+									percentage={65}
+									size={160}
+									stroke={30}
+								/>
+								<div
+									className="feedback"
+									style={{ fontSize: "18px" }}
+								>
+									<h2>Feedback 360</h2>
+									<table>{Top()}</table>
+								</div>
+							</div>
+							<div
+								className="neumorphic"
+								style={{
+									display: "flex",
+									flexDirection: "row",
+									maxWidth: "450px",
+								}}
+							>
+								<div className="days">
+									<defs>
+										<linearGradient
+											id="linear"
+											x1="0%"
+											y1="50%"
+											x2="100%"
+											y2="100%"
+										>
+											<stop
+												offset="0%"
+												stopColor="#04A0B6"
+											/>
+											<stop
+												offset="80%"
+												stopColor="#1fddbd"
+											/>
+										</linearGradient>
+									</defs>
+									<svg viewBox="0 0 160 160" width="160px">
+										<rect
+											fill="url(#linear)"
+											width="160"
+											height="160"
+											rx="15"
+										/>
+									</svg>
+									<div>
+										<p>faltam</p>
+										<div>
+											<p>9</p>
+										</div>
+										<p>dias</p>
+									</div>
+								</div>
+								<div
+									style={{
+										height: "100%",
+										display: "flex",
+										flexDirection: "column",
+										justifyContent: "center",
+									}}
+								>
+									<p style={{ fontWeight: "bold" }}>Dica:</p>
+									<p
+										style={{
+											margin: "15px 10px",
+											maxWidth: "210px",
+											textAlign: "center",
+										}}
+									>
+										Responda um formulário
+										<br />
+										<span style={{ verticalAlign: "top" }}>
+											a cada
+										</span>
+										<span
+											className="text-neumorphic"
+											style={{ fontSize: "60px" }}
+										>
+											2
+										</span>{" "}
+										dias
+									</p>
+								</div>
+							</div>
+						</div>
+						<div
+							className="teams"
+							style={{
+								overflow: "unset",
+								flex: "1",
+								display: "flex",
+								flexDirection: "row",
+								marginLeft: "8px",
+								filter:
+									"drop-shadow( -4px -4px 5px rgba(248, 248, 248, 0.08)) drop-shadow(4px 4px 5px rgba(0, 0, 0, 0.75))",
+							}}
+						>
+							<svg
+								width="154"
+								height="121"
+								viewBox="0 0 154 121"
+								style={{
+									display: "flex",
+									marginRight: "-24px",
+									marginTop: "35px",
+								}}
+							>
+								<path
+									d="M 0 40 C 0 28.9543 8.9543 20 20 20 H 120 C 125.523 20 130 15.5228 130 10 V 0 H 153 V 121 H 130 V 111 C 130 105.477 125.523 101 120 101 H 20 C 8.9543 101 0 92.0457 0 81 Z"
+									fill="#212121"
+								/>
+							</svg>
+							<ul
+								style={{
+									position: "absolute",
+									margin: "0",
+									marginTop: "55px",
+									padding: "0",
+									textAlign: "center",
+									width: "130px",
+									listStyleType: "none",
+								}}
+							>
+								{Teams()}
+							</ul>
+							<div
+								className="neumorphic list"
+								style={{
+									flex: "1",
+									marginLeft: "0",
+									zIndex: "2",
+									backgroundColor: "#212121",
+									boxShadow: "unset",
+								}}
+							>
+								<table>
+									<tr>
+										<td>Mateus Vallim</td>
+										<td>Realizações</td>
+										<td>Realizações</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div
+						className="neumorphic sidebar"
+						style={{ maxWidth: "20vw" }}
+					>
+						<h2>Dúvidas Sobre como responder o Feedback 360?</h2>
+						<h3>Pergunta 1?</h3>
+						<p>Resposta 1</p>
+						<h3>Pergunta 2?</h3>
+						<p>Resposta 2</p>
+						<h3>Pergunta 3?</h3>
+						<p>Resposta 3</p>
+						<h3>Pergunta 4?</h3>
+						<p>Resposta 4</p>
+						<h3>Pergunta 5?</h3>
+						<p>Resposta 5</p>
+						<h3>Pergunta 6?</h3>
+						<p>Resposta 6</p>
+						<h2>
+							Assista este vídeo para ajudar em outras perguntas
+						</h2>
+					</div>
+				</div>
+			</div>
+		);
+	} else {
+		return;
+	}
+}
+
+export default Feedback;
+
+function changeList(i) {
+	const svg = document.querySelector("div.teams svg");
+	svg.style.marginTop = 35 + i * 81 + "px";
+	const list = document.querySelector("div.teams ul");
+	list.childNodes.forEach((e) => {
+		e.classList = "";
+	});
+	list.childNodes[i].classList += "active";
+}

@@ -6,7 +6,11 @@ function Logout() {
 		fire.auth().signOut();
 	}
 
-	return <button onClick={logout}>Logout</button>;
+	return (
+		<button onClick={logout} style={{ maxWidth: "100px" }}>
+			Logout
+		</button>
+	);
 }
 
 export default Logout;

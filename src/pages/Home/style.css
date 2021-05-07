@@ -5,8 +5,7 @@ div.parent {
 	flex-direction: column;
 }
 
-header.containerHome,
-div.containerHome {
+.containerHome {
 	background-color: #212121;
 	color: #fff;
 }
