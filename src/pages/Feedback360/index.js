@@ -1,61 +1,82 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./style.css";
 import Perfil from "../../images/Fotos.png";
-// import Ambev from "../../images/logo-ambev-branca-2048.png";
 import Logout from "../../components/Logout";
 import ProgressBar from "../../components/ProgressBar";
 import firebase from "firebase";
 import Dots from "./Dots";
-// import { CircularProgress } from "@material-ui/core";
-import data from "./data.json";
+import { members, db } from "../../config/fire";
+
+function List() {
+	var username = firebase.auth().currentUser.displayName;
+	const [list, setList] = useState([]);
+	useEffect(() => {
+		let listArr = [];
+		members
+			.where("apelido", "==", username)
+			.get()
+			.then((doc) => {
+				const id = doc.docs[0].id;
+				db.collection("members/" + id + "/teams")
+					.get()
+					.then((col) => {
+						col.docs.forEach((doc) => {
+							listArr.push(doc.data());
+						});
+						setList(listArr);
+					});
+			})
+			.catch((error) => {
+				alert(error);
+			});
+	}, [username]);
+	return list;
+}
+
+function Top() {
+	const list = List();
+	return list.map((e) => {
+		var i;
+		var dots = [];
+		for (i = 0; i < e.respondidos; i++) {
+			dots.push(<Dots active />);
+		}
+		for (i = 0; i < e.total - e.respondidos; i++) {
+			dots.push(<Dots />);
+		}
+		return (
+			<tr key={Math.random()}>
+				<td>
+					<p>{e.team}</p>
+				</td>
+				<td>{dots}</td>
+			</tr>
+		);
+	});
+}
+
+function Teams() {
+	const list = List();
+	if (list.length > 0) {
+		return list.map((e) => {
+			return (
+				<li
+					onClick={() => {
+						changeList(list.indexOf(e));
+					}}
+					id={list.indexOf(e)}
+					className={list.indexOf(e) === 0 ? "active" : ""}
+				>
+					{e.team}
+				</li>
+			);
+		});
+	}
+}
 
 function Feedback() {
 	var user = firebase.auth().currentUser;
-
 	if (user) {
-		function Top() {
-			return data.map((e) => {
-				var i;
-				var dots = [];
-				for (i = 0; i < e.respondidos; i++) {
-					dots.push(<Dots active />);
-				}
-				for (i = 0; i < e.total - e.respondidos; i++) {
-					dots.push(<Dots />);
-				}
-				return (
-					<tr key={Math.random()}>
-						<td>
-							<p>{e.team}</p>
-						</td>
-						<td>{dots}</td>
-					</tr>
-				);
-			});
-		}
-
-		function Teams() {
-			return data.map((e) => {
-				return (
-					<li
-						onClick={() => {
-							changeList(data.indexOf(e));
-						}}
-						id={data.indexOf(e)}
-						className={data.indexOf(e) === 0 ? "active" : ""}
-					>
-						{e.team}
-					</li>
-				);
-			});
-		}
-
-		function List(i) {
-			return data[i].pessoas.map((e) => {
-				return;
-			});
-		}
-
 		return (
 			<div
 				className="parent"
@@ -183,8 +204,7 @@ function Feedback() {
 								display: "flex",
 								flexDirection: "row",
 								marginLeft: "8px",
-								filter:
-									"drop-shadow( -4px -4px 5px rgba(248, 248, 248, 0.08)) drop-shadow(4px 4px 5px rgba(0, 0, 0, 0.75))",
+								filter: "drop-shadow( -4px -4px 5px rgba(248, 248, 248, 0.08)) drop-shadow(4px 4px 5px rgba(0, 0, 0, 0.75))",
 							}}
 						>
 							<svg
