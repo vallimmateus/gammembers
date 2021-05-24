@@ -37,10 +37,14 @@ const useStyles = makeStyles((theme) => ({
 			border: "unset",
 			boxShadow:
 				"-4px -4px 10px 3px #fff, 4px 4px 10px -3px rgba(0, 0, 0, 0.25)",
+			backgroundColor:
+				"linear-gradient(135deg, #d5d5d5 0%, #e0e0e0 100%)",
 		},
 		"& button.login > span:nth-of-type(1)": {
-			"-webkit-background-clip": "text",
-			color: "transparent",
+			// "-webkit-background-clip": "text",
+			color: "#f5f5f5",
+		},
+		"& button.login": {
 			background: "linear-gradient(135deg, #04A0B6 0%, #1FDDBD 79.17%)",
 		},
 		"& button.signUp > span:nth-of-type(1)": {

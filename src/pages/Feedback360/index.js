@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import "./style.css";
+import useWindowDimensions from "../../hooks/useWindowDimensions";
 import Perfil from "../../images/Fotos.png";
 import Logout from "../../components/Logout";
 import ProgressBar from "../../components/ProgressBar";
 import firebase from "firebase";
 import Dots from "./Dots";
 import { members, db } from "../../config/fire";
+import { GoogleSpreadsheet } from "google-spreadsheet";
+import feedjson from "../../config/feedback-360-292622-9ca5e084fa4e.json";
 
 function List() {
-	var username = firebase.auth().currentUser.displayName;
 	const [list, setList] = useState([]);
 	useEffect(() => {
+		var username = firebase.auth().currentUser.displayName;
 		let listArr = [];
 		members
 			.where("apelido", "==", username)
@@ -29,7 +32,7 @@ function List() {
 			.catch((error) => {
 				alert(error);
 			});
-	}, [username]);
+	}, []);
 	return list;
 }
 
@@ -45,17 +48,17 @@ function Top() {
 			dots.push(<Dots />);
 		}
 		return (
-			<tr key={Math.random()}>
+			<tr style={{ overflow: "visible" }} key={Math.random()}>
 				<td>
 					<p>{e.team}</p>
 				</td>
-				<td>{dots}</td>
+				<td style={{ overflow: "visible" }}>{dots}</td>
 			</tr>
 		);
 	});
 }
 
-function Teams() {
+function Teams(setIndex) {
 	const list = List();
 	if (list.length > 0) {
 		return list.map((e) => {
@@ -63,6 +66,7 @@ function Teams() {
 				<li
 					onClick={() => {
 						changeList(list.indexOf(e));
+						setIndex(list.indexOf(e));
 					}}
 					id={list.indexOf(e)}
 					className={list.indexOf(e) === 0 ? "active" : ""}
@@ -74,8 +78,184 @@ function Teams() {
 	}
 }
 
+function Table(index = 0) {
+	const [isLoading, setLoading] = useState(true);
+	const [linksExt, setLinksExt] = useState([]);
+	const list = List();
+	const totalPromise = TotalList();
+	totalPromise.then((total) => {
+		const { unique, links } = total;
+
+		// console.log("Table()", links);
+		if (links !== undefined) {
+			if (links.length > 0 && linksExt.length === 0) {
+				// console.log("lá dentro", links);
+				setLoading(false);
+				setLinksExt(links);
+				// console.log("chegou aqui");
+			}
+		}
+	});
+
+	if (isLoading) {
+		return (
+			<tr>
+				<td colSpan="4">Carregando...</td>
+			</tr>
+		);
+	}
+	// console.log(linksExt);
+
+	if (list.length > 0 && linksExt.length > 0) {
+		// console.log("links", localLinks);
+		var pessoas = list.map((e) => {
+			return Object.entries(e.pessoas);
+		});
+		if (pessoas.length > 0) {
+			// pessoas[index].map(async (e) => {
+			// 	const idx = linksExt.findIndex((element) => {
+			// 		return element.nome === e[0];
+			// 	});
+			// 	var pessoa = linksExt[idx];
+			// 	if (pessoa.respondido === null) {
+			// 		const promise = verifyNumUsp(pessoa.sheet);
+			// 		const resp = await promise.then((prom) => {
+			// 			return prom;
+			// 		});
+			// 		console.log(pessoa.nome, resp);
+			// 		var copyLinksExt = linksExt;
+			// 		copyLinksExt[idx].respondido = resp;
+			// 		setLinksExt(copyLinksExt);
+			// 	}
+			// });
+			return pessoas[index].map((e) => {
+				return (
+					<tr
+						// className={true ? "" : "inactive"}
+						key={pessoas[index].indexOf(e)}
+					>
+						<td>{e[0]}</td>
+						<td>{e[1][0]}</td>
+						<td>
+							{e[1][1].toDate().getDate()}/
+							{parseInt(e[1][1].toDate().getMonth()) + 1} -{" "}
+							{e[1][2].toDate().getDate()}/
+							{parseInt(e[1][2].toDate().getMonth()) + 1}
+						</td>
+						<td>
+							<a
+								onClick={async () => {
+									const idx = linksExt.findIndex(
+										(element) => {
+											return element.nome === e[0];
+										}
+									);
+									var pessoa = linksExt[idx];
+									const promise = verifyNumUsp(pessoa.sheet);
+									const resp = await promise.then((prom) => {
+										return prom;
+									});
+									if (resp) {
+										alert(
+											"Você já respondeu este feedback"
+										);
+									} else {
+										window.open(pessoa.form, "_blank");
+									}
+								}}
+								// href={
+								// 	linksExt.find(
+								// 		(element) => element.nome === e[0]
+								// 	).form
+								// }
+								// target="_blank"
+								rel="noopener noreferrer"
+							>
+								Responder
+							</a>
+						</td>
+					</tr>
+				);
+			});
+		}
+	}
+}
+
+function Dias() {
+	const now = new Date();
+	const finish = new Date(2021, 5, 7, 23, 59, 59, 999);
+	const diffTime = Math.abs(finish - now);
+	const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+	return diffDays;
+}
+
+async function TotalList() {
+	const list = List();
+	const query = [];
+	list.map((e) => {
+		return Object.entries(e.pessoas).map((pessoa) => {
+			return query.push(pessoa[0]);
+		});
+	});
+	const unique = [...new Set(query)];
+	const collectionLinks = await db.collection("links").get();
+	let promises = collectionLinks.docs.map((doc) => {
+		return doc.data();
+	});
+	const arr = await Promise.all(promises);
+	let links = [];
+	// console.log("unique", unique);
+	unique.map((eUnique) => {
+		const e = arr.find((element) => element.nome === eUnique);
+		var sheet = e.sheet;
+		var sheetId = sheet.slice(sheet.lastIndexOf("/") + 1, sheet.length);
+		return links.push({
+			nome: e.nome,
+			form: e.form,
+			sheet: sheetId,
+			respondido: null,
+		});
+	});
+	// const promises = unique.map(async (e) => {
+	// 	const doc = await db.collection("links").doc(e).get();
+	// 	var sheet = doc.data().sheet;
+	// 	var sheetId = sheet.slice(sheet.lastIndexOf("/") + 1, sheet.length);
+	// 	var resp = verifyNumUsp(sheetId);
+	// 	links.push({
+	// 		nome: e,
+	// 		form: doc.data().form,
+	// 		sheet: sheetId,
+	// 		respondido: resp,
+	// 	});
+	// });
+	if (unique.length === links.length) {
+		// console.log("TotalList()", links);
+		return { unique, links, list };
+	}
+}
+
 function Feedback() {
+	const [index, setIndex] = useState(0);
+	const { width } = useWindowDimensions();
 	var user = firebase.auth().currentUser;
+	var username = user.displayName;
+	const [done, setDone] = useState(0);
+	useEffect(() => {
+		members
+			.where("apelido", "==", username)
+			.get()
+			.then(async (querySnapshot) => {
+				let promises = querySnapshot.docs.map((doc) => {
+					return doc.data();
+				});
+				const exportData = await Promise.all(promises);
+				setDone(exportData[0].concluido);
+			})
+			.catch((error) => {
+				alert(error);
+			});
+	}, [username]);
+
 	if (user) {
 		return (
 			<div
@@ -103,22 +283,37 @@ function Feedback() {
 							<div
 								className="neumorphic"
 								style={{
-									display: "flex",
-									flexDirection: "row",
+									display: "inline-flex",
 									flex: "1",
 								}}
 							>
 								<ProgressBar
-									percentage={65}
-									size={160}
-									stroke={30}
+									percentage={done}
+									size={width * 0.083}
+									stroke={width * 0.016}
 								/>
 								<div
 									className="feedback"
-									style={{ fontSize: "18px" }}
+									style={{
+										fontSize: "18px",
+										overflow: "visible",
+									}}
 								>
 									<h2>Feedback 360</h2>
-									<table>{Top()}</table>
+									<div
+										style={{
+											overflowY: "auto",
+											height: "100%",
+										}}
+									>
+										<table
+											style={{
+												overflow: "visible",
+											}}
+										>
+											{Top()}
+										</table>
+									</div>
 								</div>
 							</div>
 							<div
@@ -148,18 +343,21 @@ function Feedback() {
 											/>
 										</linearGradient>
 									</defs>
-									<svg viewBox="0 0 160 160" width="160px">
+									<svg
+										viewBox="0 0 100 100"
+										width={`${width * 0.083}px`}
+									>
 										<rect
 											fill="url(#linear)"
-											width="160"
-											height="160"
+											width="100"
+											height="100"
 											rx="15"
 										/>
 									</svg>
 									<div>
 										<p>faltam</p>
 										<div>
-											<p>9</p>
+											<p>{Dias()}</p>
 										</div>
 										<p>dias</p>
 									</div>
@@ -207,34 +405,45 @@ function Feedback() {
 								filter: "drop-shadow( -4px -4px 5px rgba(248, 248, 248, 0.08)) drop-shadow(4px 4px 5px rgba(0, 0, 0, 0.75))",
 							}}
 						>
-							<svg
-								width="154"
-								height="121"
-								viewBox="0 0 154 121"
+							<div
+								className="teams-list"
 								style={{
+									position: "relative",
 									display: "flex",
-									marginRight: "-24px",
-									marginTop: "35px",
+									overflowY: "auto",
+									margin: "35px 0",
+									width: "154px",
 								}}
 							>
-								<path
-									d="M 0 40 C 0 28.9543 8.9543 20 20 20 H 120 C 125.523 20 130 15.5228 130 10 V 0 H 153 V 121 H 130 V 111 C 130 105.477 125.523 101 120 101 H 20 C 8.9543 101 0 92.0457 0 81 Z"
-									fill="#212121"
-								/>
-							</svg>
-							<ul
-								style={{
-									position: "absolute",
-									margin: "0",
-									marginTop: "55px",
-									padding: "0",
-									textAlign: "center",
-									width: "130px",
-									listStyleType: "none",
-								}}
-							>
-								{Teams()}
-							</ul>
+								<svg
+									width="154"
+									height="121"
+									viewBox="0 0 154 121"
+									style={{
+										display: "flex",
+										marginRight: "-24px",
+										position: "absolute",
+									}}
+								>
+									<path
+										d="M 0 40 C 0 28.9543 8.9543 20 20 20 H 120 C 125.523 20 130 15.5228 130 10 V 0 H 153 V 121 H 130 V 111 C 130 105.477 125.523 101 120 101 H 20 C 8.9543 101 0 92.0457 0 81 Z"
+										fill="#212121"
+									/>
+								</svg>
+								<ul
+									style={{
+										position: "absolute",
+										margin: "0",
+										marginTop: "20px",
+										padding: "0",
+										textAlign: "center",
+										width: "130px",
+										listStyleType: "none",
+									}}
+								>
+									{Teams(setIndex)}
+								</ul>
+							</div>
 							<div
 								className="neumorphic list"
 								style={{
@@ -245,13 +454,16 @@ function Feedback() {
 									boxShadow: "unset",
 								}}
 							>
-								<table>
-									<tr>
-										<td>Mateus Vallim</td>
-										<td>Realizações</td>
-										<td>Realizações</td>
-									</tr>
-								</table>
+								<div>
+									<table>
+										<tr>
+											<th>Nome</th>
+											<th colSpan="2">Trabalhou em</th>
+											<th>Feedback 360</th>
+										</tr>
+										{Table(index)}
+									</table>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -288,10 +500,58 @@ export default Feedback;
 
 function changeList(i) {
 	const svg = document.querySelector("div.teams svg");
-	svg.style.marginTop = 35 + i * 81 + "px";
+	svg.style.top = i * 81 + "px";
 	const list = document.querySelector("div.teams ul");
 	list.childNodes.forEach((e) => {
 		e.classList = "";
 	});
 	list.childNodes[i].classList += "active";
+}
+
+// Config variables
+// const SPREADSHEET_ID = process.env.REACT_APP_SPREADSHEET_ID;
+// const SHEET_ID = process.env.REACT_APP_SHEET_ID;
+// const CLIENT_EMAIL = process.env.REACT_APP_GOOGLE_CLIENT_EMAIL;
+// const PRIVATE_KEY = process.env.REACT_APP_GOOGLE_SERVICE_PRIVATE_KEY;
+
+// docId = "1lPyBA_05fAWC2KYUzBuvuog1UCCDlyqZr378y3FDEEs",
+async function verifyNumUsp(docId, start = 2, end = 50) {
+	const doc = new GoogleSpreadsheet(docId);
+
+	try {
+		await doc.useServiceAccountAuth({
+			client_email: feedjson.client_email,
+			private_key: feedjson.private_key,
+		});
+		await doc.loadInfo();
+
+		const sheet = doc.sheetsByIndex[0];
+		let arr = [];
+		await sheet.loadCells(`B${start}:B${end}`);
+		for (let i = start; i <= end; i++) {
+			const value = sheet.getCellByA1(`B${i}`).value;
+			if (value != null) {
+				arr.push(value);
+			}
+		}
+		var numUsp = await Promise.resolve(NUsp());
+		return arr.includes(numUsp);
+	} catch (e) {
+		console.log("Error: ", e);
+	}
+}
+
+async function NUsp() {
+	var username = firebase.auth().currentUser.displayName;
+	var numUsp;
+	numUsp = await members
+		.where("apelido", "==", username)
+		.get()
+		.then((doc) => {
+			return doc.docs[0].data().nUsp;
+		})
+		.catch((error) => {
+			alert(error);
+		});
+	return numUsp;
 }

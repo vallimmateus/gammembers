@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function Dots({ active = 0 }) {
 	var color;
 	if (active) {
@@ -7,6 +9,7 @@ export default function Dots({ active = 0 }) {
 	}
 	return (
 		<div
+			className="dot"
 			style={{
 				boxShadow:
 					"-2px -2px 5px rgba(248, 248, 248, 0.08), 2px 2px 5px rgba(0, 0, 0, 0.75)",
@@ -14,7 +17,6 @@ export default function Dots({ active = 0 }) {
 				width: "12px",
 				height: "12px",
 				position: "relative",
-				marginLeft: "7px",
 			}}
 		>
 			<defs>
