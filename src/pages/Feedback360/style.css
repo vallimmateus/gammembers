@@ -119,6 +119,7 @@ header {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
+	align-items: center;
 	color: #fff;
 }
 
@@ -145,6 +146,24 @@ header .user div {
 header .Perfil {
 	height: 50px;
 	width: auto;
+}
+
+header button {
+	border: none;
+	font-size: 1.1em;
+	color: #1fddbd;
+	background-color: #212121;
+	font-weight: bold;
+	width: 7vw;
+	margin-right: 25px;
+	height: 50px;
+	border-radius: 15px;
+	cursor: pointer;
+}
+
+header button:hover {
+	color: #212121;
+	background-color: #1fddbd;
 }
 
 .days {

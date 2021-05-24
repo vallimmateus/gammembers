@@ -236,7 +236,15 @@ async function TotalList() {
 
 function Feedback() {
 	const [index, setIndex] = useState(0);
+	const [unq, setUnq] = useState(1);
 	const { width } = useWindowDimensions();
+	const totalPromise = TotalList();
+	totalPromise.then((total) => {
+		const { unique } = total;
+		setUnq(unique.length);
+	});
+	console.log("unq:", unq);
+	const dias = Dias();
 	var user = firebase.auth().currentUser;
 	var username = user.displayName;
 	const [done, setDone] = useState(0);
@@ -357,7 +365,7 @@ function Feedback() {
 									<div>
 										<p>faltam</p>
 										<div>
-											<p>{Dias()}</p>
+											<p>{dias}</p>
 										</div>
 										<p>dias</p>
 									</div>
@@ -378,18 +386,18 @@ function Feedback() {
 											textAlign: "center",
 										}}
 									>
-										Responda um formulário
-										<br />
 										<span style={{ verticalAlign: "top" }}>
-											a cada
+											Responda
 										</span>
 										<span
 											className="text-neumorphic"
 											style={{ fontSize: "60px" }}
 										>
-											2
-										</span>{" "}
-										dias
+											{Math.ceil(unq / dias)}
+										</span>
+										formulário
+										{Math.ceil(unq / dias) > 1 ? "s" : ""}
+										<br />a cada dia
 									</p>
 								</div>
 							</div>
@@ -472,21 +480,35 @@ function Feedback() {
 						style={{ maxWidth: "20vw" }}
 					>
 						<h2>Dúvidas Sobre como responder o Feedback 360?</h2>
-						<h3>Pergunta 1?</h3>
-						<p>Resposta 1</p>
-						<h3>Pergunta 2?</h3>
-						<p>Resposta 2</p>
-						<h3>Pergunta 3?</h3>
-						<p>Resposta 3</p>
-						<h3>Pergunta 4?</h3>
-						<p>Resposta 4</p>
-						<h3>Pergunta 5?</h3>
-						<p>Resposta 5</p>
-						<h3>Pergunta 6?</h3>
-						<p>Resposta 6</p>
-						<h2>
-							Assista este vídeo para ajudar em outras perguntas
-						</h2>
+						<h3>Eu preciso responder de todo mundo?</h3>
+						<p>
+							Você irá responder apenas daqueles que você trabalha
+							atualmente (ex: diretórios, núcleos, projetos,
+							departamentos)
+						</p>
+						<h3>
+							Não tenho uma opinião formatada sobre fulano, e
+							agora?
+						</h3>
+						<p>
+							Escreva com base no que você trabalhou com a pessoa
+							e seja o mais sincero possível, caso ache que está
+							muito simples coloque uma observação “não tenho uma
+							opinião formada sobre”
+						</p>
+						<h3>Por que eu preciso responder de tantas pessoas?</h3>
+						<p>
+							Com o seu feedback você está dando a oportunidade da
+							outra pessoa poder evoluir mais ainda, e assim fazer
+							com que a empresa Gamma Jr cresça ainda mais.
+						</p>
+						<h2>Ficou com mais alguma dúvida?</h2>
+						<p>
+							Entre em contato com algum membro de GP para que
+							possa te orientar melhor. Não fique com vergonha de
+							perguntas idiotas, toda dúvida é válida e pode ser a
+							dúvida de outra pessoa também.
+						</p>
 					</div>
 				</div>
 			</div>

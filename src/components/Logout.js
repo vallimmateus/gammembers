@@ -7,7 +7,11 @@ function Logout() {
 	}
 
 	return (
-		<button onClick={logout} style={{ maxWidth: "100px" }}>
+		<button
+			className="neumorphic"
+			onClick={logout}
+			style={{ maxWidth: "100px" }}
+		>
 			Logout
 		</button>
 	);
