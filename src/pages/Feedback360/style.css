@@ -29,6 +29,14 @@ div.parent {
 
 .top {
 	display: flex;
+	height: 263px;
+}
+
+.top > div:last-child > div:last-child {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 h1,
@@ -63,6 +71,11 @@ div.neumorphic {
 
 .neumorphic > * {
 	margin: var(--gap);
+}
+
+.feedback {
+	width: 100%;
+	overflow: visible;
 }
 
 .feedback h2,
@@ -100,7 +113,24 @@ div.neumorphic {
 	}
 
 	.top {
-		max-height: 220px;
+		height: 220px;
+	}
+
+	.top > div:last-child > div:last-child {
+		display: none;
+	}
+
+	.top > div:last-child {
+		width: 144px;
+	}
+
+	.days {
+		height: 120px !important;
+		width: 120px !important;
+	}
+
+	.list > div {
+		height: calc(100vh - 436px) !important;
 	}
 }
 
@@ -146,6 +176,8 @@ header .user div {
 header .Perfil {
 	height: 50px;
 	width: auto;
+	min-width: unset;
+	min-height: unset;
 }
 
 header button {
@@ -167,12 +199,17 @@ header button:hover {
 }
 
 .days {
-	width: 8.3vw;
-	height: 8.3vw;
+	height: 100%;
 	position: relative;
+	margin: 0;
+	overflow: visible;
 }
 
-.days > div {
+/* .days > div:first-child {
+	margin: 0;
+} */
+
+.days > div:last-child {
 	display: flex;
 	flex-direction: column;
 	position: absolute;
@@ -185,7 +222,7 @@ header button:hover {
 	justify-content: center;
 }
 
-.days > div > div {
+.days > div:last-child > div {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -197,10 +234,16 @@ header button:hover {
 	font-size: 100%;
 }
 
-.days > div > div p {
+.days > div:last-child > div p {
 	color: black;
 	font-size: 3.3em;
 	font-weight: bold;
+}
+
+.sidebar > div {
+	overflow-y: auto;
+	margin-right: 3px;
+	padding-right: 10px;
 }
 
 .sidebar h2,
@@ -214,13 +257,18 @@ header button:hover {
 }
 
 .sidebar h3 {
-	color: #ddd;
+	color: #1fddbd;
 }
 
 .sidebar p {
-	margin: 3px 5px;
+	margin: 3px 0 30px 5px;
 	color: #bbb;
 	font-size: 0.8em;
+	text-align: justify;
+}
+
+.sidebar * {
+	overflow: visible;
 }
 
 .teams ul li {
@@ -239,6 +287,10 @@ header button:hover {
 	direction: rtl;
 }
 
+.teams .teams-list li {
+	margin: 0 10px;
+}
+
 .list table,
 .list tr {
 	margin: 0;
@@ -251,7 +303,7 @@ header button:hover {
 }
 
 .list > div {
-	height: calc(100vh - 516px);
+	height: calc(100vh - 566px);
 	width: 100%;
 	overflow-y: auto;
 	margin: 0;
@@ -269,22 +321,24 @@ header button:hover {
 	color: #555;
 }
 
-.list table tr.inactive a {
+.list table tr.inactive div {
 	filter: grayscale(1);
 	cursor: not-allowed;
 	pointer-events: none;
 }
 
-.list table td a {
+.list table td div {
 	text-decoration: none;
 	background-color: #1fddbd;
 	color: #1c1c1c;
 	padding: 3px 15px;
 	border-radius: 5px;
 	cursor: pointer;
+	width: unset;
+	display: inline;
 }
 
-.list table tr:not(.inactive) td a:hover {
+.list table tr:not(.inactive) td div:hover {
 	background-color: #99f0e1;
 }
 
@@ -319,6 +373,8 @@ header button:hover {
 }
 
 .list > div::-webkit-scrollbar,
+.teams .teams-list::-webkit-scrollbar,
+.sidebar > div::-webkit-scrollbar,
 .feedback > div::-webkit-scrollbar {
 	width: 10px;
 	margin-left: 5px;
@@ -327,24 +383,28 @@ header button:hover {
 
 .list > div::-webkit-scrollbar-track,
 .teams .teams-list::-webkit-scrollbar-track,
+.sidebar > div::-webkit-scrollbar-track,
 .feedback > div::-webkit-scrollbar-track {
 	background: transparent;
 	border-radius: 5px;
 }
 .list > div:hover::-webkit-scrollbar-track,
+.sidebar > div::-webkit-scrollbar-track,
 .feedback > div:hover::-webkit-scrollbar-track {
 	background: #1c1c1c;
 }
 
 .list > div::-webkit-scrollbar-thumb,
+.sidebar > div::-webkit-scrollbar-thumb,
 .teams .teams-list::-webkit-scrollbar-thumb,
 .feedback > div::-webkit-scrollbar-thumb {
 	background: #272727;
 	border-radius: 5px;
 }
 
-.list > div::-webkit-scrollbar-thumb,
-.teams .teams-list::-webkit-scrollbar-thumb,
-.feedback > div::-webkit-scrollbar-thumb {
+.list > div:hover::-webkit-scrollbar-thumb,
+.sidebar > div:hover::-webkit-scrollbar-thumb,
+.teams .teams-list:hover::-webkit-scrollbar-thumb,
+.feedback > div:hover::-webkit-scrollbar-thumb {
 	background: #2a2a2a;
 }

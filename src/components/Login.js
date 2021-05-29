@@ -16,20 +16,22 @@ function Login() {
 
 	return (
 		<form>
-			<TextField
-				id="email"
-				label="Enter USP"
-				type="email"
-				required
-				fullWidth
-			/>
-			<TextField
-				id="password"
-				label="Senha"
-				type="password"
-				required
-				fullWidth
-			/>
+			<div>
+				<TextField
+					id="email"
+					label="Enter USP"
+					type="email"
+					required
+					fullWidth
+				/>
+				<TextField
+					id="password"
+					label="Senha"
+					type="password"
+					required
+					fullWidth
+				/>
+			</div>
 			<Button className="esqueceu">Esqueceu sua senha?</Button>
 			<Button className="login" variant="outlined" onClick={login}>
 				Login

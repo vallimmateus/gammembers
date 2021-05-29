@@ -78,42 +78,44 @@ function SignUp() {
 
 	return (
 		<form>
-			<TextField
-				id="email"
-				label="Email USP"
-				type="email"
-				required
-				fullWidth
-				onChange={changeEmail}
-			/>
-			<TextField
-				id="nome"
-				label="Nome completo"
-				type="text"
-				required
-				fullWidth
-			/>
-			<TextField
-				id="nUsp"
-				label="Número USP"
-				type="number"
-				required
-				fullWidth
-			/>
-			<TextField
-				id="password"
-				label="Senha"
-				type="password"
-				required
-				fullWidth
-			/>
-			<TextField
-				id="password2"
-				label="Confirme a senha"
-				type="password"
-				required
-				fullWidth
-			/>
+			<div>
+				<TextField
+					id="email"
+					label="Email USP"
+					type="email"
+					required
+					fullWidth
+					onChange={changeEmail}
+				/>
+				<TextField
+					id="nome"
+					label="Nome completo"
+					type="text"
+					required
+					fullWidth
+				/>
+				<TextField
+					id="nUsp"
+					label="Número USP"
+					type="number"
+					required
+					fullWidth
+				/>
+				<TextField
+					id="password"
+					label="Senha"
+					type="password"
+					required
+					fullWidth
+				/>
+				<TextField
+					id="password2"
+					label="Confirme a senha"
+					type="password"
+					required
+					fullWidth
+				/>
+			</div>
 			<Button className="login" variant="outlined" onClick={signUp}>
 				Sign Up
 			</Button>

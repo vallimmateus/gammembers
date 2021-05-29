@@ -8,12 +8,39 @@ import { ArrowBack } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
-		"& form, & > *": {
+		"&": {
+			overflow: "visible",
+		},
+		"& form, & > div": {
 			display: "flex",
 			alignItems: "center",
 			flexDirection: "column",
+			height: "100%",
+			overflow: "visible",
 		},
 		"& form > div": {
+			height: "100%",
+			width: "100%",
+			overflowY: "auto",
+		},
+		"& form > div::-webkit-scrollbar": {
+			width: "8px",
+		},
+		"& form > div::-webkit-scrollbar-track": {
+			backgroundColor: "transparent",
+			borderRadius: "4px",
+		},
+		"& form > div:hover::-webkit-scrollbar-track": {
+			backgroundColor: "#1c1c1c",
+		},
+		"& form > div::-webkit-scrollbar-thumb": {
+			backgroundColor: "#272727",
+			borderRadius: "4px",
+		},
+		"& form > div:hover::-webkit-scrollbar-thumb": {
+			backgroundColor: "#2a2a2a",
+		},
+		"& form > div > div": {
 			marginTop: "15px",
 		},
 		"& label": {
@@ -26,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
 		"& label.Mui-focused": {
 			fontWeight: "bold",
 		},
-		"& button": {
+		"& button, & #login": {
 			width: "40%",
 			minWidth: "250px",
 			marginTop: "20px",
@@ -39,6 +66,10 @@ const useStyles = makeStyles((theme) => ({
 				"-4px -4px 10px 3px #fff, 4px 4px 10px -3px rgba(0, 0, 0, 0.25)",
 			backgroundColor:
 				"linear-gradient(135deg, #d5d5d5 0%, #e0e0e0 100%)",
+			minHeight: "50px",
+		},
+		"& form button": {
+			marginTop: "0",
 		},
 		"& button.login > span:nth-of-type(1)": {
 			// "-webkit-background-clip": "text",

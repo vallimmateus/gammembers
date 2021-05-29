@@ -36,30 +36,44 @@ function List() {
 	return list;
 }
 
-function Top() {
-	const list = List();
-	return list.map((e) => {
-		var i;
-		var dots = [];
-		for (i = 0; i < e.respondidos; i++) {
-			dots.push(<Dots active />);
-		}
-		for (i = 0; i < e.total - e.respondidos; i++) {
-			dots.push(<Dots />);
-		}
+function Top({ list = [] }) {
+	if (list.length > 0) {
+		return list.map((e) => {
+			var i;
+			var dots = [];
+			for (i = 0; i < e.respondidos; i++) {
+				dots.push(<Dots active />);
+			}
+			for (i = 0; i < e.total - e.respondidos; i++) {
+				dots.push(<Dots />);
+			}
+			return (
+				<tr style={{ overflow: "visible" }} key={Math.random()}>
+					<td>
+						<p>{e.team}</p>
+					</td>
+					<td style={{ overflow: "visible" }}>{dots}</td>
+				</tr>
+			);
+		});
+	} else {
 		return (
-			<tr style={{ overflow: "visible" }} key={Math.random()}>
-				<td>
-					<p>{e.team}</p>
-				</td>
-				<td style={{ overflow: "visible" }}>{dots}</td>
+			<tr
+				style={{
+					height: "70%",
+					width: "100%",
+					display: "flex",
+					justifyContent: "center",
+					alignItems: "center",
+				}}
+			>
+				<p>Carregando...</p>
 			</tr>
 		);
-	});
+	}
 }
 
-function Teams(setIndex) {
-	const list = List();
+function Teams({ setIndex = () => {}, list = [] }) {
 	if (list.length > 0) {
 		return list.map((e) => {
 			return (
@@ -68,66 +82,36 @@ function Teams(setIndex) {
 						changeList(list.indexOf(e));
 						setIndex(list.indexOf(e));
 					}}
-					id={list.indexOf(e)}
+					key={list.indexOf(e)}
 					className={list.indexOf(e) === 0 ? "active" : ""}
 				>
 					{e.team}
 				</li>
 			);
 		});
+	} else {
+		return <li className="active">Carregando times</li>;
 	}
 }
 
-function Table(index = 0) {
+function Table({ index = 0, links = {}, list = [] }) {
 	const [isLoading, setLoading] = useState(true);
 	const [linksExt, setLinksExt] = useState([]);
-	const list = List();
-	const totalPromise = TotalList();
-	totalPromise.then((total) => {
-		const { unique, links } = total;
-
-		// console.log("Table()", links);
-		if (links !== undefined) {
-			if (links.length > 0 && linksExt.length === 0) {
-				// console.log("lá dentro", links);
-				setLoading(false);
-				setLinksExt(links);
-				// console.log("chegou aqui");
-			}
-		}
-	});
-
+	if (links !== undefined && links.length > 0 && linksExt.length === 0) {
+		setLoading(false);
+		setLinksExt(links);
+	}
 	if (isLoading) {
 		return (
 			<tr>
 				<td colSpan="4">Carregando...</td>
 			</tr>
 		);
-	}
-	// console.log(linksExt);
-
-	if (list.length > 0 && linksExt.length > 0) {
-		// console.log("links", localLinks);
+	} else {
 		var pessoas = list.map((e) => {
 			return Object.entries(e.pessoas);
 		});
 		if (pessoas.length > 0) {
-			// pessoas[index].map(async (e) => {
-			// 	const idx = linksExt.findIndex((element) => {
-			// 		return element.nome === e[0];
-			// 	});
-			// 	var pessoa = linksExt[idx];
-			// 	if (pessoa.respondido === null) {
-			// 		const promise = verifyNumUsp(pessoa.sheet);
-			// 		const resp = await promise.then((prom) => {
-			// 			return prom;
-			// 		});
-			// 		console.log(pessoa.nome, resp);
-			// 		var copyLinksExt = linksExt;
-			// 		copyLinksExt[idx].respondido = resp;
-			// 		setLinksExt(copyLinksExt);
-			// 	}
-			// });
 			return pessoas[index].map((e) => {
 				return (
 					<tr
@@ -137,13 +121,15 @@ function Table(index = 0) {
 						<td>{e[0]}</td>
 						<td>{e[1][0]}</td>
 						<td>
-							{e[1][1].toDate().getDate()}/
-							{parseInt(e[1][1].toDate().getMonth()) + 1} -{" "}
-							{e[1][2].toDate().getDate()}/
-							{parseInt(e[1][2].toDate().getMonth()) + 1}
+							{e[1][1]
+								? `${e[1][1].toDate().getDate()}/
+							${parseInt(e[1][1].toDate().getMonth()) + 1} -${" "}
+							${e[1][2].toDate().getDate()}/
+							${parseInt(e[1][2].toDate().getMonth()) + 1}`
+								: "sem dados"}
 						</td>
 						<td>
-							<a
+							<div
 								onClick={async () => {
 									const idx = linksExt.findIndex(
 										(element) => {
@@ -163,16 +149,10 @@ function Table(index = 0) {
 										window.open(pessoa.form, "_blank");
 									}
 								}}
-								// href={
-								// 	linksExt.find(
-								// 		(element) => element.nome === e[0]
-								// 	).form
-								// }
-								// target="_blank"
 								rel="noopener noreferrer"
 							>
 								Responder
-							</a>
+							</div>
 						</td>
 					</tr>
 				);
@@ -189,8 +169,9 @@ function Dias() {
 	return diffDays;
 }
 
-async function TotalList() {
-	const list = List();
+function TotalList(list = []) {
+	const [verify, setVerify] = useState(true);
+	const [arr, setArr] = useState({});
 	const query = [];
 	list.map((e) => {
 		return Object.entries(e.pessoas).map((pessoa) => {
@@ -198,17 +179,33 @@ async function TotalList() {
 		});
 	});
 	const unique = [...new Set(query)];
-	const collectionLinks = await db.collection("links").get();
-	let promises = collectionLinks.docs.map((doc) => {
-		return doc.data();
-	});
-	const arr = await Promise.all(promises);
+	useEffect(() => {
+		db.collection("links")
+			.get()
+			.then(async (querySnapshot) => {
+				let promises = querySnapshot.docs.map((doc) => {
+					return doc.data();
+				});
+				const exportData = await Promise.all(promises);
+				setArr(exportData);
+			})
+			.catch((error) => {
+				alert(error);
+			});
+	}, []);
+
 	let links = [];
-	// console.log("unique", unique);
+	if (unique.length !== links.length && verify) {
+		setVerify(false);
+	}
 	unique.map((eUnique) => {
 		const e = arr.find((element) => element.nome === eUnique);
 		var sheet = e.sheet;
 		var sheetId = sheet.slice(sheet.lastIndexOf("/") + 1, sheet.length);
+		// setTimeout(() => {
+		// 	var resp = verifyNumUsp(sheetId);
+		// 	console.log(e.nome, ": ", resp);
+		// }, 250);
 		return links.push({
 			nome: e.nome,
 			form: e.form,
@@ -230,20 +227,15 @@ async function TotalList() {
 	// });
 	if (unique.length === links.length) {
 		// console.log("TotalList()", links);
-		return { unique, links, list };
+		return { unique, links };
 	}
 }
 
 function Feedback() {
 	const [index, setIndex] = useState(0);
-	const [unq, setUnq] = useState(1);
+	const list = List();
 	const { width } = useWindowDimensions();
-	const totalPromise = TotalList();
-	totalPromise.then((total) => {
-		const { unique } = total;
-		setUnq(unique.length);
-	});
-	console.log("unq:", unq);
+	const { unique, links } = TotalList(list);
 	const dias = Dias();
 	var user = firebase.auth().currentUser;
 	var username = user.displayName;
@@ -300,26 +292,22 @@ function Feedback() {
 									size={width * 0.083}
 									stroke={width * 0.016}
 								/>
-								<div
-									className="feedback"
-									style={{
-										fontSize: "18px",
-										overflow: "visible",
-									}}
-								>
+								<div className="feedback">
 									<h2>Feedback 360</h2>
 									<div
 										style={{
-											overflowY: "auto",
+											overflow: "auto",
 											height: "100%",
 										}}
 									>
 										<table
 											style={{
 												overflow: "visible",
+												height: "calc(100% - 4px)",
+												width: "100%",
 											}}
 										>
-											{Top()}
+											<Top list={list} />
 										</table>
 									</div>
 								</div>
@@ -333,35 +321,66 @@ function Feedback() {
 								}}
 							>
 								<div className="days">
-									<defs>
-										<linearGradient
-											id="linear"
-											x1="0%"
-											y1="50%"
-											x2="100%"
-											y2="100%"
-										>
-											<stop
-												offset="0%"
-												stopColor="#04A0B6"
-											/>
-											<stop
-												offset="80%"
-												stopColor="#1fddbd"
-											/>
-										</linearGradient>
-									</defs>
-									<svg
-										viewBox="0 0 100 100"
-										width={`${width * 0.083}px`}
+									<div
+										style={{
+											height: "calc(100% - 6px)",
+											padding: "3px",
+											borderRadius: "30px",
+											backgroundColor: "#212121",
+											boxShadow:
+												"-3px -3px 7.5px rgba(248, 248, 248, 0.08), 3px 3px 7.5px rgba(0, 0, 0, 0.75)",
+										}}
 									>
-										<rect
-											fill="url(#linear)"
-											width="100"
-											height="100"
-											rx="15"
-										/>
-									</svg>
+										<div
+											style={{
+												height: "100%",
+												borderRadius: "27px",
+												overflow: "hidden",
+												position: "relative",
+											}}
+										>
+											<div
+												style={{
+													height: "100%",
+													width: "100%",
+													borderRadius: "27px",
+													position: "absolute",
+													boxShadow:
+														"inset -3px -3px 7.5px rgba(248, 248, 248, 0.08), inset 3px 3px 7.5px rgba(0, 0, 0, 0.75)",
+												}}
+											></div>
+											<defs>
+												<linearGradient
+													id="linear"
+													x1="0%"
+													y1="100%"
+													x2="100%"
+													y2="100%"
+												>
+													<stop
+														offset="0%"
+														// stopColor="#04A0B6"
+														color="#04A0B6"
+													/>
+													<stop
+														offset="80%"
+														// stopColor="#1fddbd"
+														color="#1fddbd"
+													/>
+												</linearGradient>
+											</defs>
+											<svg
+												viewBox="0 0 100 100"
+												height="100%"
+											>
+												<rect
+													fill="url(#linear)"
+													width="100"
+													height="100"
+												/>
+											</svg>
+										</div>
+									</div>
 									<div>
 										<p>faltam</p>
 										<div>
@@ -370,14 +389,7 @@ function Feedback() {
 										<p>dias</p>
 									</div>
 								</div>
-								<div
-									style={{
-										height: "100%",
-										display: "flex",
-										flexDirection: "column",
-										justifyContent: "center",
-									}}
-								>
+								<div>
 									<p style={{ fontWeight: "bold" }}>Dica:</p>
 									<p
 										style={{
@@ -393,10 +405,12 @@ function Feedback() {
 											className="text-neumorphic"
 											style={{ fontSize: "60px" }}
 										>
-											{Math.ceil(unq / dias)}
+											{Math.ceil(unique.length / dias)}
 										</span>
 										formulário
-										{Math.ceil(unq / dias) > 1 ? "s" : ""}
+										{Math.ceil(unique.length / dias) > 1
+											? "s"
+											: ""}
 										<br />a cada dia
 									</p>
 								</div>
@@ -449,7 +463,7 @@ function Feedback() {
 										listStyleType: "none",
 									}}
 								>
-									{Teams(setIndex)}
+									<Teams setIndex={setIndex} list={list} />
 								</ul>
 							</div>
 							<div
@@ -469,7 +483,11 @@ function Feedback() {
 											<th colSpan="2">Trabalhou em</th>
 											<th>Feedback 360</th>
 										</tr>
-										{Table(index)}
+										<Table
+											index={index}
+											links={links}
+											list={list}
+										/>
 									</table>
 								</div>
 							</div>
@@ -479,42 +497,47 @@ function Feedback() {
 						className="neumorphic sidebar"
 						style={{ maxWidth: "20vw" }}
 					>
-						<h2>Dúvidas Sobre como responder o Feedback 360?</h2>
-						<h3>Eu preciso responder de todo mundo?</h3>
-						<p>
-							Você irá responder apenas daqueles que você trabalha
-							atualmente (ex: diretórios, núcleos, projetos,
-							departamentos)
-						</p>
-						<h3>
-							Não tenho uma opinião formatada sobre fulano, e
-							agora?
-						</h3>
-						<p>
-							Escreva com base no que você trabalhou com a pessoa
-							e seja o mais sincero possível, caso ache que está
-							muito simples coloque uma observação “não tenho uma
-							opinião formada sobre”
-						</p>
-						<h3>Por que eu preciso responder de tantas pessoas?</h3>
-						<p>
-							Com o seu feedback você está dando a oportunidade da
-							outra pessoa poder evoluir mais ainda, e assim fazer
-							com que a empresa Gamma Jr cresça ainda mais.
-						</p>
-						<h2>Ficou com mais alguma dúvida?</h2>
-						<p>
-							Entre em contato com algum membro de GP para que
-							possa te orientar melhor. Não fique com vergonha de
-							perguntas idiotas, toda dúvida é válida e pode ser a
-							dúvida de outra pessoa também.
-						</p>
+						<div>
+							<h2>
+								Dúvidas Sobre como responder o Feedback 360?
+							</h2>
+							<h3>Eu preciso responder de todo mundo?</h3>
+							<p>
+								Você irá responder apenas daqueles que você
+								trabalha atualmente (ex: diretórios, núcleos,
+								projetos, departamentos)
+							</p>
+							<h3>
+								Não tenho uma opinião formatada sobre fulano, e
+								agora?
+							</h3>
+							<p>
+								Escreva com base no que você trabalhou com a
+								pessoa e seja o mais sincero possível, caso ache
+								que está muito simples coloque uma observação
+								“não tenho uma opinião formada sobre”
+							</p>
+							<h3>
+								Por que eu preciso responder de tantas pessoas?
+							</h3>
+							<p>
+								Com o seu feedback você está dando a
+								oportunidade da outra pessoa poder evoluir mais
+								ainda, e assim fazer com que a empresa Gamma Jr
+								cresça ainda mais.
+							</p>
+							<h2>Ficou com mais alguma dúvida?</h2>
+							<p>
+								Entre em contato com algum membro de GP para que
+								possa te orientar melhor. Não fique com vergonha
+								de perguntas idiotas, toda dúvida é válida e
+								pode ser a dúvida de outra pessoa também.
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>
 		);
-	} else {
-		return;
 	}
 }
 
@@ -530,13 +553,6 @@ function changeList(i) {
 	list.childNodes[i].classList += "active";
 }
 
-// Config variables
-// const SPREADSHEET_ID = process.env.REACT_APP_SPREADSHEET_ID;
-// const SHEET_ID = process.env.REACT_APP_SHEET_ID;
-// const CLIENT_EMAIL = process.env.REACT_APP_GOOGLE_CLIENT_EMAIL;
-// const PRIVATE_KEY = process.env.REACT_APP_GOOGLE_SERVICE_PRIVATE_KEY;
-
-// docId = "1lPyBA_05fAWC2KYUzBuvuog1UCCDlyqZr378y3FDEEs",
 async function verifyNumUsp(docId, start = 2, end = 50) {
 	const doc = new GoogleSpreadsheet(docId);
 
