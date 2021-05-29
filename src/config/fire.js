@@ -15,6 +15,7 @@ var firebaseConfig = {
 const fire = firebase.initializeApp(firebaseConfig);
 
 export var db = firebase.firestore();
+export var members = db.collection("members"); //.withConverter(memberConverter);
 
 // class Members extends React.Component {
 // 	constructor(apelido, cargos, emailUsp, nUsp, nome) {
@@ -48,8 +49,6 @@ export var db = firebase.firestore();
 // 		);
 // 	},
 // };
-
-export var members = db.collection("members"); //.withConverter(memberConverter);
 
 export async function getMemberByEmail(email) {
 	// const member =

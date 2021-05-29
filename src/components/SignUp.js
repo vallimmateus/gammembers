@@ -1,6 +1,6 @@
 import React from "react";
 import fire from "../config/fire";
-import firebase from "firebase";
+// import firebase from "firebase";
 import { TextField, Button } from "@material-ui/core";
 import { members } from "../config/fire";
 
@@ -11,28 +11,27 @@ function SignUp() {
 			members
 				.where("emailUsp", "==", email)
 				.get()
-				.then((querySnapshot) => {
+				.then(async (querySnapshot) => {
 					let promisses = querySnapshot.docs.map((doc) => {
 						return doc.data();
 					});
-					return Promise.all(promisses).then((exportArray) => {
-						document.querySelector("input#nome").value =
-							exportArray[0].nome;
-						document.querySelector("input#nUsp").value =
-							exportArray[0].nUsp;
-						document
-							.querySelector("#nome-label")
-							.classList.add(
-								"MuiInputLabel-shrink",
-								"MuiFormLabel-filled"
-							);
-						document
-							.querySelector("#nUsp-label")
-							.classList.add(
-								"MuiInputLabel-shrink",
-								"MuiFormLabel-filled"
-							);
-					});
+					const exportArray = await Promise.all(promisses);
+					document.querySelector("input#nome").value =
+						exportArray[0].nome;
+					document.querySelector("input#nUsp").value =
+						exportArray[0].nUsp;
+					document
+						.querySelector("#nome-label")
+						.classList.add(
+							"MuiInputLabel-shrink",
+							"MuiFormLabel-filled"
+						);
+					document
+						.querySelector("#nUsp-label")
+						.classList.add(
+							"MuiInputLabel-shrink",
+							"MuiFormLabel-filled"
+						);
 				});
 		}
 	}
@@ -53,23 +52,22 @@ function SignUp() {
 				fire.auth()
 					.createUserWithEmailAndPassword(email, password)
 					.then((u) => {
-						var user = firebase.auth().currentUser;
 						members
 							.where("emailUsp", "==", email)
 							.get()
-							.then((querySnapshot) => {
+							.then(async (querySnapshot) => {
 								let promises = querySnapshot.docs.map((doc) => {
 									return doc.data();
 								});
-								return Promise.all(promises).then(
-									(exportArray) => {
-										user.updateProfile({
-											displayName: exportArray[0].apelido,
-										});
-									}
+								const exportArray = await Promise.all(promises);
+								u.user.updateProfile({
+									displayName: exportArray[0].apelido,
+								});
+								alert(
+									"Successfully Signed up, ",
+									exportArray[0].apelido
 								);
 							});
-						alert("Successfully Signed up");
 					})
 					.catch((err) => {
 						alert(err.toString());
@@ -80,42 +78,44 @@ function SignUp() {
 
 	return (
 		<form>
-			<TextField
-				id="email"
-				label="Email USP"
-				type="email"
-				required
-				fullWidth
-				onChange={changeEmail}
-			/>
-			<TextField
-				id="nome"
-				label="Nome completo"
-				type="text"
-				required
-				fullWidth
-			/>
-			<TextField
-				id="nUsp"
-				label="Número USP"
-				type="number"
-				required
-				fullWidth
-			/>
-			<TextField
-				id="password"
-				label="Senha"
-				type="password"
-				required
-				fullWidth
-			/>
-			<TextField
-				id="password2"
-				label="Confirme a senha"
-				type="password"
-				required
-				fullWidth
-			/>
+			<div>
+				<TextField
+					id="email"
+					label="Email USP"
+					type="email"
+					required
+					fullWidth
+					onChange={changeEmail}
+				/>
+				<TextField
+					id="nome"
+					label="Nome completo"
+					type="text"
+					required
+					fullWidth
+				/>
+				<TextField
+					id="nUsp"
+					label="Número USP"
+					type="number"
+					required
+					fullWidth
+				/>
+				<TextField
+					id="password"
+					label="Senha"
+					type="password"
+					required
+					fullWidth
+				/>
+				<TextField
+					id="password2"
+					label="Confirme a senha"
+					type="password"
+					required
+					fullWidth
+				/>
+			</div>
 			<Button className="login" variant="outlined" onClick={signUp}>
 				Sign Up
 			</Button>

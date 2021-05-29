@@ -1,3 +1,7 @@
+* {
+	transition: all 0.3s;
+}
+
 .Container {
 	height: 100%;
 	min-height: 100vh;
@@ -15,6 +19,7 @@
 	align-items: center;
 	justify-content: center;
 	width: 550px;
+	height: calc(100vh - 60px);
 	flex-direction: column;
 	padding-top: 30px;
 	padding-bottom: 30px;
@@ -23,8 +28,17 @@
 }
 
 .Perfil {
-	height: 250px;
-	width: 250px;
+	min-height: 250px;
+	min-width: 250px;
+}
+
+@media (max-height: 800px) {
+	.Perfil {
+		min-height: 150px;
+		min-width: 150px;
+		height: 150px;
+		width: 150px;
+	}
 }
 
 .InContainer div {

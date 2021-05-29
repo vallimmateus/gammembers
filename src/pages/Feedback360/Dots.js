@@ -1,12 +1,16 @@
-export default function Dots({ active = 0 }) {
-	var color;
-	if (active) {
-		color = "url(#linear)";
-	} else {
-		color = "#212121";
-	}
+import React from "react";
+
+export default function Dots({ active = false }) {
+	// var color;
+	// if (active) {
+	// 	color = "#1fddbd";
+	// 	// "url(#linear)";
+	// } else {
+	// 	color = "#212121";
+	// }
 	return (
 		<div
+			className="dot"
 			style={{
 				boxShadow:
 					"-2px -2px 5px rgba(248, 248, 248, 0.08), 2px 2px 5px rgba(0, 0, 0, 0.75)",
@@ -14,7 +18,6 @@ export default function Dots({ active = 0 }) {
 				width: "12px",
 				height: "12px",
 				position: "relative",
-				marginLeft: "7px",
 			}}
 		>
 			<defs>
@@ -25,8 +28,8 @@ export default function Dots({ active = 0 }) {
 					x2="100%"
 					y2="100%"
 				>
-					<stop offset="0%" stopColor="#04A0B6" />
-					<stop offset="80%" stopColor="#1fddbd" />
+					<stop offset="0%" color="#04A0B6" />
+					<stop offset="80%" color="#1fddbd" />
 				</linearGradient>
 			</defs>
 			<svg
@@ -39,7 +42,12 @@ export default function Dots({ active = 0 }) {
 					margin: "0",
 				}}
 			>
-				<circle fill={color} cx="50%" cy="50%" r="5" />
+				<circle
+					fill={active ? "url(#linear)" : "#212121"}
+					cx="50%"
+					cy="50%"
+					r="5"
+				/>
 			</svg>
 		</div>
 	);
