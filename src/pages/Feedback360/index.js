@@ -94,7 +94,7 @@ function Teams({ setIndex = () => {}, list = [] }) {
 	}
 }
 
-function Table({ index = 0, links = {}, list = [] }) {
+function Table({ index = 0, links = [], list = [] }) {
 	const [isLoading, setLoading] = useState(true);
 	const [linksExt, setLinksExt] = useState([]);
 	if (links !== undefined && links.length > 0 && linksExt.length === 0) {
@@ -113,9 +113,10 @@ function Table({ index = 0, links = {}, list = [] }) {
 		});
 		if (pessoas.length > 0) {
 			return pessoas[index].map((e) => {
+				const obj = links.find((element) => element.nome === e[0]);
 				return (
 					<tr
-						// className={true ? "" : "inactive"}
+						className={obj.respondido ? "inactive" : ""}
 						key={pessoas[index].indexOf(e)}
 					>
 						<td>{e[0]}</td>
@@ -169,16 +170,12 @@ function Dias() {
 	return diffDays;
 }
 
-function TotalList(list = []) {
-	const [verify, setVerify] = useState(true);
+function TotalList(list, numUsp) {
+	const [verify, setVerify] = useState(false);
 	const [arr, setArr] = useState({});
-	const query = [];
-	list.map((e) => {
-		return Object.entries(e.pessoas).map((pessoa) => {
-			return query.push(pessoa[0]);
-		});
-	});
-	const unique = [...new Set(query)];
+	const [resp, setResp] = useState([]);
+	const [myId, setMyId] = useState("");
+	var username = firebase.auth().currentUser.displayName;
 	useEffect(() => {
 		db.collection("links")
 			.get()
@@ -193,50 +190,179 @@ function TotalList(list = []) {
 				alert(error);
 			});
 	}, []);
+	useEffect(() => {
+		if (list !== undefined && arr !== {}) {
+			setVerify(true);
+		}
+		members
+			.where("apelido", "==", username)
+			.get()
+			.then((doc) => {
+				const id = doc.docs[0].id;
+				setMyId(id);
+				const collec = db
+					.collection("members")
+					.doc(id)
+					.collection("unique");
+				collec
+					.get()
+					.then(async (sub) => {
+						if (sub.docs.length > 0) {
+							// console.log(
+							// 	"já existe a subcoleção unique no firebase:",
+							// 	sub.docs[0].data().A
+							// );
+							if (verify) {
+								let unq = sub.docs[0].data().A;
+								setResp(unq);
+								// let promises = unq.map((element) => {
+								// 	if (element.respondido !== true) {
+								// 		return verifyNumUsp(
+								// 			element.sheetId,
+								// 			numUsp
+								// 		);
+								// 	} else {
+								// 		return element.respondido;
+								// 	}
+								// });
+								// let unq2 = await Promise.all(promises);
+								// console.log("unq2", unq2);
+								// unq2.forEach((element) => {
+								// 	let obj = unq.find(
+								// 		(e) =>
+								// 			unq.indexOf(e) ===
+								// 			unq2.indexOf(element)
+								// 	);
+								// 	// console.log(
+								// 	// 	element.nome,
+								// 	// 	element.respondido
+								// 	// );
+								// 	if (
+								// 		element !== obj.respondido &&
+								// 		element !== undefined
+								// 	) {
+								// 		unq[unq.indexOf(obj)].respondido =
+								// 			element;
+								// 	}
+								// });
+								// collec.doc().update({ A: unq });
+							}
+						} else if (sub.docs.length === 0) {
+							if (list.length > 0) {
+								const query = new Set();
+								list.forEach((e) => {
+									Object.entries(e.pessoas).forEach(
+										(pessoa) => {
+											query.add(pessoa[0]);
+										}
+									);
+								});
+								const unq = [...query];
+								let promises = unq.map((e) => {
+									let obj = arr.find(
+										(element) => element.nome === e
+									);
+									var sheet = obj.sheet;
+									var sheetId = sheet.slice(
+										sheet.lastIndexOf("/") + 1,
+										sheet.length
+									);
+									const resp = verifyNumUsp(sheetId, numUsp);
+									return resp;
+								});
+								var resp = await Promise.all(promises);
+								var unq2 = [];
+								unq.forEach((e) => {
+									let obj = arr.find(
+										(element) => element.nome === e
+									);
+									var sheet = obj.sheet;
+									var sheetId = sheet.slice(
+										sheet.lastIndexOf("/") + 1,
+										sheet.length
+									);
+									unq2.push({
+										nome: e,
+										respondido: resp[unq.indexOf(e)],
+										sheetId: sheetId,
+										form: obj.form,
+									});
+								});
+								setResp(unq2);
+							}
+							if (
+								unq2.length > 0 &&
+								typeof unq2[0] === "object"
+							) {
+								collec.add({ A: unq2 });
+							}
+						} else {
+							throw new Error();
+						}
+					})
+					.then(() => {
+						setVerify(false);
+					})
+					.catch((e) => {
+						console.log("Error:", e);
+					});
+			})
+			.catch((error) => {
+				alert(error);
+			});
+	}, [list, arr]);
+	const [verify2, setVerify2] = useState(true);
+	const [resp2, setResp2] = useState([]);
+	useEffect(() => {
+		if (resp.length > 0 && verify2) {
+			setVerify2(false);
+			setResp2(resp);
+		}
+	}, [resp]);
+	useEffect(async () => {
+		if (resp2.length > 0 && !verify2) {
+			let promises = resp2.map((element) => {
+				if (element.respondido !== true) {
+					return verifyNumUsp(element.sheetId, numUsp);
+				} else {
+					return true;
+				}
+			});
+			var respProm = await Promise.all(promises);
+			// console.log("respProm", respProm);
 
-	let links = [];
-	if (unique.length !== links.length && verify) {
-		setVerify(false);
-	}
-	unique.map((eUnique) => {
-		const e = arr.find((element) => element.nome === eUnique);
-		var sheet = e.sheet;
-		var sheetId = sheet.slice(sheet.lastIndexOf("/") + 1, sheet.length);
-		// setTimeout(() => {
-		// 	var resp = verifyNumUsp(sheetId);
-		// 	console.log(e.nome, ": ", resp);
-		// }, 250);
-		return links.push({
-			nome: e.nome,
-			form: e.form,
-			sheet: sheetId,
-			respondido: null,
-		});
-	});
-	// const promises = unique.map(async (e) => {
-	// 	const doc = await db.collection("links").doc(e).get();
-	// 	var sheet = doc.data().sheet;
-	// 	var sheetId = sheet.slice(sheet.lastIndexOf("/") + 1, sheet.length);
-	// 	var resp = verifyNumUsp(sheetId);
-	// 	links.push({
-	// 		nome: e,
-	// 		form: doc.data().form,
-	// 		sheet: sheetId,
-	// 		respondido: resp,
-	// 	});
-	// });
-	if (unique.length === links.length) {
-		// console.log("TotalList()", links);
-		return { unique, links };
+			resp2.forEach((element) => {
+				if (respProm[resp2.indexOf(element)] !== undefined) {
+					element.respondido = respProm[resp2.indexOf(element)];
+				} else {
+					element.respondido = false;
+				}
+			});
+			// console.log("resp2", resp2);
+			db.collection("members")
+				.doc(myId)
+				.collection("unique")
+				.doc()
+				.update({ A: resp2 });
+		}
+	}, [resp2]);
+	if (resp.length > 0) {
+		// let unique = [];
+		// // console.log("resp antes do return", resp);
+		// resp.forEach((element) => {
+		// 	unique.push(element.nome);
+		// });
+		return resp;
+	} else {
+		return [];
 	}
 }
 
 function Feedback() {
 	const [index, setIndex] = useState(0);
 	const list = List();
+	const [numUsp, setNumUsp] = useState(0);
 	const { width } = useWindowDimensions();
-	const { unique, links } = TotalList(list);
-	const dias = Dias();
 	var user = firebase.auth().currentUser;
 	var username = user.displayName;
 	const [done, setDone] = useState(0);
@@ -250,11 +376,39 @@ function Feedback() {
 				});
 				const exportData = await Promise.all(promises);
 				setDone(exportData[0].concluido);
+				setNumUsp(exportData[0].nUsp);
 			})
 			.catch((error) => {
 				alert(error);
 			});
 	}, [username]);
+	// const [unique, setUnique] = useState([]);
+	// const [links, setLinks] = useState([]);
+	const links = TotalList(list, numUsp);
+	const unique = [];
+	links.forEach((element) => {
+		unique.push(element.nome);
+	});
+	// useEffect(() => {
+	// 	setUnique(unique);
+	// 	setLinks(links);
+	// }, [list]);
+	// console.log(unique.length, links.length);
+	const [contagem, setContagem] = useState(true);
+	if (contagem && unique.length !== 0) {
+		// console.log("unique:", unique);
+		// console.log("links:", links);
+		// console.log("list:", list);
+		setContagem(false);
+		// links.map((element) => {
+		// if (element.respondido === null) {
+		// verifyNumUsp(element.sheet);
+		// console.log(element);
+		// }
+		// 	return;
+		// });
+	}
+	const dias = Dias();
 
 	if (user) {
 		return (
@@ -487,6 +641,7 @@ function Feedback() {
 											index={index}
 											links={links}
 											list={list}
+											numUsp={numUsp}
 										/>
 									</table>
 								</div>
@@ -553,9 +708,11 @@ function changeList(i) {
 	list.childNodes[i].classList += "active";
 }
 
-async function verifyNumUsp(docId, start = 2, end = 50) {
+async function verifyNumUsp(docId, numUsp, start = 2, end = 50) {
 	const doc = new GoogleSpreadsheet(docId);
-
+	// console.log("doc", doc);
+	// console.log("dentro do useEffect");
+	//async () => {
 	try {
 		await doc.useServiceAccountAuth({
 			client_email: feedjson.client_email,
@@ -572,24 +729,12 @@ async function verifyNumUsp(docId, start = 2, end = 50) {
 				arr.push(value);
 			}
 		}
-		var numUsp = await Promise.resolve(NUsp());
-		return arr.includes(numUsp);
+		var resp = arr.includes(numUsp);
+		// console.log("verifyNumUsp(): ", resp);
+		return resp;
+		// setTimeout(() => {
+		// }, 300);
 	} catch (e) {
-		console.log("Error: ", e);
+		console.log(docId, e);
 	}
-}
-
-async function NUsp() {
-	var username = firebase.auth().currentUser.displayName;
-	var numUsp;
-	numUsp = await members
-		.where("apelido", "==", username)
-		.get()
-		.then((doc) => {
-			return doc.docs[0].data().nUsp;
-		})
-		.catch((error) => {
-			alert(error);
-		});
-	return numUsp;
 }
