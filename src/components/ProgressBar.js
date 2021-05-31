@@ -46,6 +46,16 @@ function ProgressBar({ percentage, size, stroke }) {
 			>
 				<defs>
 					<linearGradient
+						id="linearprogress"
+						x1="50%"
+						y1="0%"
+						x2="0%"
+						y2="100%"
+					>
+						<stop offset="0%" stopColor="#04A0B6" />
+						<stop offset="80%" stopColor="#1fddbd" />
+					</linearGradient>
+					<linearGradient
 						id="linear"
 						x1="0%"
 						y1="50%"
@@ -61,7 +71,7 @@ function ProgressBar({ percentage, size, stroke }) {
 					cx={center}
 					cy={center}
 					r={radius}
-					stroke="url(#linear)"
+					stroke="url(#linearprogress)"
 					strokeLinecap="round"
 					strokeWidth={stroke}
 					strokeDasharray={circumference}

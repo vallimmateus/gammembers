@@ -503,26 +503,6 @@ function Feedback() {
 														"inset -3px -3px 7.5px rgba(248, 248, 248, 0.08), inset 3px 3px 7.5px rgba(0, 0, 0, 0.75)",
 												}}
 											></div>
-											<defs>
-												<linearGradient
-													id="linear"
-													x1="0%"
-													y1="100%"
-													x2="100%"
-													y2="100%"
-												>
-													<stop
-														offset="0%"
-														// stopColor="#04A0B6"
-														color="#04A0B6"
-													/>
-													<stop
-														offset="80%"
-														// stopColor="#1fddbd"
-														color="#1fddbd"
-													/>
-												</linearGradient>
-											</defs>
 											<svg
 												viewBox="0 0 100 100"
 												height="100%"
