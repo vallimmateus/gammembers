@@ -9,6 +9,7 @@ import Dots from "./Dots";
 import { members, db } from "../../config/fire";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import feedjson from "../../config/feedback-360-292622-9ca5e084fa4e.json";
+import { SettingsOutlined } from "@material-ui/icons";
 
 function List() {
 	const [list, setList] = useState([]);
@@ -94,73 +95,145 @@ function Teams({ setIndex = () => {}, list = [] }) {
 	}
 }
 
-function Table({ index = 0, links = [], list = [] }) {
-	const [isLoading, setLoading] = useState(true);
-	const [linksExt, setLinksExt] = useState([]);
-	if (links !== undefined && links.length > 0 && linksExt.length === 0) {
-		setLoading(false);
-		setLinksExt(links);
-	}
-	if (isLoading) {
-		return (
-			<tr>
-				<td colSpan="4">Carregando...</td>
-			</tr>
-		);
-	} else {
-		var pessoas = list.map((e) => {
-			return Object.entries(e.pessoas);
-		});
-		if (pessoas.length > 0) {
-			return pessoas[index].map((e) => {
-				const obj = links.find((element) => element.nome === e[0]);
-				return (
-					<tr
-						className={obj.respondido ? "inactive" : ""}
-						key={pessoas[index].indexOf(e)}
-					>
-						<td>{e[0]}</td>
-						<td>{e[1][0]}</td>
-						<td>
-							{e[1][1]
-								? `${e[1][1].toDate().getDate()}/
-							${parseInt(e[1][1].toDate().getMonth()) + 1} -${" "}
-							${e[1][2].toDate().getDate()}/
-							${parseInt(e[1][2].toDate().getMonth()) + 1}`
-								: "sem dados"}
-						</td>
-						<td>
-							<div
-								onClick={async () => {
-									const idx = linksExt.findIndex(
-										(element) => {
-											return element.nome === e[0];
-										}
-									);
-									var pessoa = linksExt[idx];
-									const promise = verifyNumUsp(pessoa.sheet);
-									const resp = await promise.then((prom) => {
-										return prom;
-									});
-									if (resp) {
-										alert(
-											"Você já respondeu este feedback"
-										);
-									} else {
-										window.open(pessoa.form, "_blank");
-									}
-								}}
-								rel="noopener noreferrer"
-							>
-								Responder
-							</div>
-						</td>
-					</tr>
-				);
-			});
-		}
-	}
-}
+// function Table() {
+// 	if (stage === 0) {
+// 		return (
+// 			<tr>
+// 				<td colSpan="4">Carregando...</td>
+// 			</tr>
+// 		);
+// 	} else if (stage === 1) {
+// 		return (
+// 			<>
+// 				<tr>
+// 					<td colSpan="4">Carregando...</td>
+// 				</tr>
+// 				<tr>
+// 					<td>Psiu</td>
+// 				</tr>
+// 			</>
+// 		);
+// 	} else if (stage === 2) {
+// 		return (
+// 			<>
+// 				<tr>
+// 					<td colSpan="4">Carregando...</td>
+// 				</tr>
+// 				<tr>
+// 					<td>Psiu</td>
+// 					<td colSpan="2">É, você mesmo!</td>
+// 					<td>Vem aqui</td>
+// 				</tr>
+// 			</>
+// 		);
+// 	} else if (stage === 3) {
+// 		return (
+// 			<>
+// 				<tr>
+// 					<td colSpan="4">Carregando...</td>
+// 				</tr>
+// 				<tr>
+// 					<td>Psiu</td>
+// 					<td colSpan="2">É, você mesmo!</td>
+// 					<td>Vem aqui</td>
+// 				</tr>
+// 				<tr>
+// 					<td colSpan="4">
+// 						Sabia que faltam 3 dias pro feedback acabar?
+// 					</td>
+// 				</tr>
+// 			</>
+// 		);
+// 	} else if (stage === 4) {
+// 		return (
+// 			<>
+// 				<tr>
+// 					<td colSpan="4">Carregando...</td>
+// 				</tr>
+// 				<tr>
+// 					<td>Psiu</td>
+// 					<td colSpan="2">É, você mesmo!</td>
+// 					<td>Vem aqui</td>
+// 				</tr>
+// 				<tr>
+// 					<td colSpan="4">
+// 						Sabia que faltam 3 dias pro feedback acabar?
+// 					</td>
+// 				</tr>
+// 				<tr>
+// 					<td colSpan="3">
+// 						Mas fica tranquilo, se você clicar aqui eu consigo te
+// 						arranjar mais alguns dias pra responder
+// 					</td>
+// 					<td>
+// 						<div>WikiGamma</div>
+// 					</td>
+// 				</tr>
+// 			</>
+// 		);
+// 	} else if (stage === 5) {
+// 		return (
+// 			<>
+// 				<tr>
+// 					<td colSpan="4">Carregando...</td>
+// 				</tr>
+// 				<tr>
+// 					<td>Psiu</td>
+// 					<td colSpan="2">É, você mesmo!</td>
+// 					<td>Vem aqui</td>
+// 				</tr>
+// 				<tr>
+// 					<td colSpan="4">
+// 						Sabia que faltam 3 dias pro feedback acabar?
+// 					</td>
+// 				</tr>
+// 				<tr>
+// 					<td colSpan="3">
+// 						Mas fica tranquilo, se você clicar aqui eu consigo te
+// 						arranjar mais alguns dias pra responder
+// 					</td>
+// 					<td>
+// 						<div>WikiGamma</div>
+// 					</td>
+// 				</tr>
+// 				<tr>
+// 					<td colSpan="3">Clica vai, ninguém tá olhando</td>
+// 				</tr>
+// 			</>
+// 		);
+// 	} else {
+// 		return (
+// 			<>
+// 				<tr>
+// 					<td colSpan="4">Carregando...</td>
+// 				</tr>
+// 				<tr>
+// 					<td>Psiu</td>
+// 					<td colSpan="2">É, você mesmo!</td>
+// 					<td>Vem aqui</td>
+// 				</tr>
+// 				<tr>
+// 					<td colSpan="4">
+// 						Sabia que faltam 3 dias pro feedback acabar?
+// 					</td>
+// 				</tr>
+// 				<tr>
+// 					<td colSpan="3">
+// 						Mas fica tranquilo, se você clicar aqui eu consigo te
+// 						arranjar mais alguns dias pra responder
+// 					</td>
+// 					<td>
+// 						<div>WikiGamma</div>
+// 					</td>
+// 				</tr>
+// 				<tr>
+// 					<td colSpan="3">Clica vai, ninguém tá olhando</td>
+// 					<td>É rapidinho</td>
+// 				</tr>
+// 			</>
+// 		);
+// 	}
+// }
 
 function Dias() {
 	const now = new Date();
@@ -410,6 +483,32 @@ function Feedback() {
 	}
 	const dias = Dias();
 
+	const [stage, setStage] = useState(0);
+	const [prim, setPrim] = useState(true);
+	if (prim) {
+		setPrim(false);
+		setTimeout(() => {
+			setTimeout(() => {
+				setStage(1);
+				setTimeout(() => {
+					setStage(2);
+					setTimeout(() => {
+						setStage(3);
+						setTimeout(() => {
+							setStage(4);
+							setTimeout(() => {
+								setStage(5);
+								setTimeout(() => {
+									setStage(6);
+								}, 5000);
+							}, 5000);
+						}, 5000);
+					}, 3000);
+				}, 3000);
+			}, 3000);
+		}, 5000);
+	}
+
 	if (user) {
 		return (
 			<div
@@ -507,8 +606,32 @@ function Feedback() {
 												viewBox="0 0 100 100"
 												height="100%"
 											>
+												<linearGradient
+													id="lineara"
+													x1="0%"
+													y1="50%"
+													x2="100%"
+													y2="100%"
+												>
+													<stop
+														offset="0%"
+														stopColor={
+															stage >= 3
+																? "#B66004"
+																: "#04A0B6"
+														}
+													/>
+													<stop
+														offset="80%"
+														stopColor={
+															stage >= 3
+																? "#bd1f1f"
+																: "#1fddbd"
+														}
+													/>
+												</linearGradient>
 												<rect
-													fill="url(#linear)"
+													fill="url(#lineara)"
 													width="100"
 													height="100"
 												/>
@@ -518,7 +641,7 @@ function Feedback() {
 									<div>
 										<p>faltam</p>
 										<div>
-											<p>{dias}</p>
+											<p>{stage >= 3 ? 3 : 0}</p>
 										</div>
 										<p>dias</p>
 									</div>
@@ -539,12 +662,9 @@ function Feedback() {
 											className="text-neumorphic"
 											style={{ fontSize: "60px" }}
 										>
-											{Math.ceil(unique.length / dias)}
+											{stage >= 3 ? 5 : 0}
 										</span>
-										formulário
-										{Math.ceil(unique.length / dias) > 1
-											? "s"
-											: ""}
+										formulários
 										<br />a cada dia
 									</p>
 								</div>
@@ -617,12 +737,76 @@ function Feedback() {
 											<th colSpan="2">Trabalhou em</th>
 											<th>Feedback 360</th>
 										</tr>
-										<Table
-											index={index}
-											links={links}
-											list={list}
-											numUsp={numUsp}
-										/>
+										{stage >= 0 ? (
+											<tr>
+												<td colSpan="4">
+													Carregando...
+												</td>
+											</tr>
+										) : (
+											""
+										)}
+										{stage >= 1 ? (
+											<tr>
+												<td>Psiu</td>
+												{stage >= 2 ? (
+													<td colSpan="2">
+														É você mesmo!
+													</td>
+												) : (
+													""
+												)}
+												{stage >= 2 ? (
+													<td>Vem aqui</td>
+												) : (
+													""
+												)}
+											</tr>
+										) : (
+											""
+										)}
+										{stage >= 3 ? (
+											<tr>
+												<td colSpan="4">
+													Sabia que faltam 3 dias pro
+													feedback acabar?
+												</td>
+											</tr>
+										) : (
+											""
+										)}
+										{stage >= 4 ? (
+											<tr>
+												<td colSpan="3">
+													Mas fica tranquilo, se você
+													clicar aqui eu consigo te
+													arranjar mais alguns dias
+													pra responder
+												</td>
+												<td>
+													<div onClick={() => {}}>
+														WikiGamma
+													</div>
+												</td>
+											</tr>
+										) : (
+											""
+										)}
+										{stage >= 5 ? (
+											<tr>
+												<td colSpan="3">
+													Clica vai, ninguém tá
+													olhando
+												</td>
+												{stage >= 6 ? (
+													<td>É rapidinho</td>
+												) : (
+													""
+												)}
+											</tr>
+										) : (
+											""
+										)}
 									</table>
 								</div>
 							</div>
