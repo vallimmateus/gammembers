@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./style.css";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import Perfil from "../../images/Fotos.png";
+import Sanimel from "../../images/sanimel.png";
 import Logout from "../../components/Logout";
 import ProgressBar from "../../components/ProgressBar";
 import firebase from "firebase";
@@ -9,7 +10,6 @@ import Dots from "./Dots";
 import { members, db } from "../../config/fire";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import feedjson from "../../config/feedback-360-292622-9ca5e084fa4e.json";
-import { SettingsOutlined } from "@material-ui/icons";
 
 function List() {
 	const [list, setList] = useState([]);
@@ -95,154 +95,6 @@ function Teams({ setIndex = () => {}, list = [] }) {
 	}
 }
 
-// function Table() {
-// 	if (stage === 0) {
-// 		return (
-// 			<tr>
-// 				<td colSpan="4">Carregando...</td>
-// 			</tr>
-// 		);
-// 	} else if (stage === 1) {
-// 		return (
-// 			<>
-// 				<tr>
-// 					<td colSpan="4">Carregando...</td>
-// 				</tr>
-// 				<tr>
-// 					<td>Psiu</td>
-// 				</tr>
-// 			</>
-// 		);
-// 	} else if (stage === 2) {
-// 		return (
-// 			<>
-// 				<tr>
-// 					<td colSpan="4">Carregando...</td>
-// 				</tr>
-// 				<tr>
-// 					<td>Psiu</td>
-// 					<td colSpan="2">É, você mesmo!</td>
-// 					<td>Vem aqui</td>
-// 				</tr>
-// 			</>
-// 		);
-// 	} else if (stage === 3) {
-// 		return (
-// 			<>
-// 				<tr>
-// 					<td colSpan="4">Carregando...</td>
-// 				</tr>
-// 				<tr>
-// 					<td>Psiu</td>
-// 					<td colSpan="2">É, você mesmo!</td>
-// 					<td>Vem aqui</td>
-// 				</tr>
-// 				<tr>
-// 					<td colSpan="4">
-// 						Sabia que faltam 3 dias pro feedback acabar?
-// 					</td>
-// 				</tr>
-// 			</>
-// 		);
-// 	} else if (stage === 4) {
-// 		return (
-// 			<>
-// 				<tr>
-// 					<td colSpan="4">Carregando...</td>
-// 				</tr>
-// 				<tr>
-// 					<td>Psiu</td>
-// 					<td colSpan="2">É, você mesmo!</td>
-// 					<td>Vem aqui</td>
-// 				</tr>
-// 				<tr>
-// 					<td colSpan="4">
-// 						Sabia que faltam 3 dias pro feedback acabar?
-// 					</td>
-// 				</tr>
-// 				<tr>
-// 					<td colSpan="3">
-// 						Mas fica tranquilo, se você clicar aqui eu consigo te
-// 						arranjar mais alguns dias pra responder
-// 					</td>
-// 					<td>
-// 						<div>WikiGamma</div>
-// 					</td>
-// 				</tr>
-// 			</>
-// 		);
-// 	} else if (stage === 5) {
-// 		return (
-// 			<>
-// 				<tr>
-// 					<td colSpan="4">Carregando...</td>
-// 				</tr>
-// 				<tr>
-// 					<td>Psiu</td>
-// 					<td colSpan="2">É, você mesmo!</td>
-// 					<td>Vem aqui</td>
-// 				</tr>
-// 				<tr>
-// 					<td colSpan="4">
-// 						Sabia que faltam 3 dias pro feedback acabar?
-// 					</td>
-// 				</tr>
-// 				<tr>
-// 					<td colSpan="3">
-// 						Mas fica tranquilo, se você clicar aqui eu consigo te
-// 						arranjar mais alguns dias pra responder
-// 					</td>
-// 					<td>
-// 						<div>WikiGamma</div>
-// 					</td>
-// 				</tr>
-// 				<tr>
-// 					<td colSpan="3">Clica vai, ninguém tá olhando</td>
-// 				</tr>
-// 			</>
-// 		);
-// 	} else {
-// 		return (
-// 			<>
-// 				<tr>
-// 					<td colSpan="4">Carregando...</td>
-// 				</tr>
-// 				<tr>
-// 					<td>Psiu</td>
-// 					<td colSpan="2">É, você mesmo!</td>
-// 					<td>Vem aqui</td>
-// 				</tr>
-// 				<tr>
-// 					<td colSpan="4">
-// 						Sabia que faltam 3 dias pro feedback acabar?
-// 					</td>
-// 				</tr>
-// 				<tr>
-// 					<td colSpan="3">
-// 						Mas fica tranquilo, se você clicar aqui eu consigo te
-// 						arranjar mais alguns dias pra responder
-// 					</td>
-// 					<td>
-// 						<div>WikiGamma</div>
-// 					</td>
-// 				</tr>
-// 				<tr>
-// 					<td colSpan="3">Clica vai, ninguém tá olhando</td>
-// 					<td>É rapidinho</td>
-// 				</tr>
-// 			</>
-// 		);
-// 	}
-// }
-
-function Dias() {
-	const now = new Date();
-	const finish = new Date(2021, 5, 7, 23, 59, 59, 999);
-	const diffTime = Math.abs(finish - now);
-	const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-	return diffDays;
-}
-
 function TotalList(list, numUsp) {
 	const [verify, setVerify] = useState(false);
 	const [arr, setArr] = useState({});
@@ -281,44 +133,9 @@ function TotalList(list, numUsp) {
 					.get()
 					.then(async (sub) => {
 						if (sub.docs.length > 0) {
-							// console.log(
-							// 	"já existe a subcoleção unique no firebase:",
-							// 	sub.docs[0].data().A
-							// );
 							if (verify) {
 								let unq = sub.docs[0].data().A;
 								setResp(unq);
-								// let promises = unq.map((element) => {
-								// 	if (element.respondido !== true) {
-								// 		return verifyNumUsp(
-								// 			element.sheetId,
-								// 			numUsp
-								// 		);
-								// 	} else {
-								// 		return element.respondido;
-								// 	}
-								// });
-								// let unq2 = await Promise.all(promises);
-								// console.log("unq2", unq2);
-								// unq2.forEach((element) => {
-								// 	let obj = unq.find(
-								// 		(e) =>
-								// 			unq.indexOf(e) ===
-								// 			unq2.indexOf(element)
-								// 	);
-								// 	// console.log(
-								// 	// 	element.nome,
-								// 	// 	element.respondido
-								// 	// );
-								// 	if (
-								// 		element !== obj.respondido &&
-								// 		element !== undefined
-								// 	) {
-								// 		unq[unq.indexOf(obj)].respondido =
-								// 			element;
-								// 	}
-								// });
-								// collec.doc().update({ A: unq });
 							}
 						} else if (sub.docs.length === 0) {
 							if (list.length > 0) {
@@ -402,8 +219,6 @@ function TotalList(list, numUsp) {
 				}
 			});
 			var respProm = await Promise.all(promises);
-			// console.log("respProm", respProm);
-
 			resp2.forEach((element) => {
 				if (respProm[resp2.indexOf(element)] !== undefined) {
 					element.respondido = respProm[resp2.indexOf(element)];
@@ -411,7 +226,6 @@ function TotalList(list, numUsp) {
 					element.respondido = false;
 				}
 			});
-			// console.log("resp2", resp2);
 			db.collection("members")
 				.doc(myId)
 				.collection("unique")
@@ -420,11 +234,6 @@ function TotalList(list, numUsp) {
 		}
 	}, [resp2]);
 	if (resp.length > 0) {
-		// let unique = [];
-		// // console.log("resp antes do return", resp);
-		// resp.forEach((element) => {
-		// 	unique.push(element.nome);
-		// });
 		return resp;
 	} else {
 		return [];
@@ -455,33 +264,15 @@ function Feedback() {
 				alert(error);
 			});
 	}, [username]);
-	// const [unique, setUnique] = useState([]);
-	// const [links, setLinks] = useState([]);
 	const links = TotalList(list, numUsp);
 	const unique = [];
 	links.forEach((element) => {
 		unique.push(element.nome);
 	});
-	// useEffect(() => {
-	// 	setUnique(unique);
-	// 	setLinks(links);
-	// }, [list]);
-	// console.log(unique.length, links.length);
 	const [contagem, setContagem] = useState(true);
 	if (contagem && unique.length !== 0) {
-		// console.log("unique:", unique);
-		// console.log("links:", links);
-		// console.log("list:", list);
 		setContagem(false);
-		// links.map((element) => {
-		// if (element.respondido === null) {
-		// verifyNumUsp(element.sheet);
-		// console.log(element);
-		// }
-		// 	return;
-		// });
 	}
-	const dias = Dias();
 
 	const [stage, setStage] = useState(0);
 	const [prim, setPrim] = useState(true);
@@ -500,6 +291,9 @@ function Feedback() {
 								setStage(5);
 								setTimeout(() => {
 									setStage(6);
+									setTimeout(() => {
+										setStage(7);
+									}, 7500);
 								}, 5000);
 							}, 5000);
 						}, 5000);
@@ -541,7 +335,7 @@ function Feedback() {
 								}}
 							>
 								<ProgressBar
-									percentage={done}
+									percentage={stage >= 1 ? 135 : 0}
 									size={width * 0.083}
 									stroke={width * 0.016}
 								/>
@@ -787,7 +581,7 @@ function Feedback() {
 													<div
 														onClick={() => {
 															window.open(
-																"wiki.gammajrengenharia.com.br",
+																"http://wiki.gammajrengenharia.com.br",
 																"_blank"
 															);
 														}}
@@ -828,38 +622,58 @@ function Feedback() {
 							<h2>
 								Dúvidas Sobre como responder o Feedback 360?
 							</h2>
-							<h3>Eu preciso responder de todo mundo?</h3>
-							<p>
-								Você irá responder apenas daqueles que você
-								trabalha atualmente (ex: diretórios, núcleos,
-								projetos, departamentos)
-							</p>
-							<h3>
-								Não tenho uma opinião formatada sobre fulano, e
-								agora?
-							</h3>
-							<p>
-								Escreva com base no que você trabalhou com a
-								pessoa e seja o mais sincero possível, caso ache
-								que está muito simples coloque uma observação
-								“não tenho uma opinião formada sobre”
-							</p>
-							<h3>
-								Por que eu preciso responder de tantas pessoas?
-							</h3>
-							<p>
-								Com o seu feedback você está dando a
-								oportunidade da outra pessoa poder evoluir mais
-								ainda, e assim fazer com que a empresa Gamma Jr
-								cresça ainda mais.
-							</p>
-							<h2>Ficou com mais alguma dúvida?</h2>
-							<p>
-								Entre em contato com algum membro de GP para que
-								possa te orientar melhor. Não fique com vergonha
-								de perguntas idiotas, toda dúvida é válida e
-								pode ser a dúvida de outra pessoa também.
-							</p>
+							{stage < 7 ? (
+								<>
+									<h3>Eu preciso responder de todo mundo?</h3>
+									<p>
+										Você irá responder apenas daqueles que
+										você trabalha atualmente (ex:
+										diretórios, núcleos, projetos,
+										departamentos)
+									</p>
+									<h3>
+										Não tenho uma opinião formatada sobre
+										fulano, e agora?
+									</h3>
+									<p>
+										Escreva com base no que você trabalhou
+										com a pessoa e seja o mais sincero
+										possível, caso ache que está muito
+										simples coloque uma observação “não
+										tenho uma opinião formada sobre”
+									</p>
+									<h3>
+										Por que eu preciso responder de tantas
+										pessoas?
+									</h3>
+									<p>
+										Com o seu feedback você está dando a
+										oportunidade da outra pessoa poder
+										evoluir mais ainda, e assim fazer com
+										que a empresa Gamma Jr cresça ainda
+										mais.
+									</p>
+									<h2>Ficou com mais alguma dúvida?</h2>
+									<p>
+										Entre em contato com algum membro de GP
+										para que possa te orientar melhor. Não
+										fique com vergonha de perguntas idiotas,
+										toda dúvida é válida e pode ser a dúvida
+										de outra pessoa também.
+									</p>
+								</>
+							) : (
+								<>
+									<h3>Vai clicar não?</h3>
+									<p>Sanimel do hmm tá vendo essa ousadia</p>
+									<img
+										src={Sanimel}
+										width="150"
+										alt="Sanimel"
+										style={{ justifyContent: "center" }}
+									/>
+								</>
+							)}
 						</div>
 					</div>
 				</div>
@@ -908,74 +722,5 @@ async function verifyNumUsp(docId, numUsp, start = 2, end = 50) {
 		// }, 300);
 	} catch (e) {
 		console.log(docId, e);
-	}
-}
-
-function Interpolate(value1) {
-	if (
-		typeof value1 === "string" &&
-		value1[0] === "#"
-		// typeof value2 == "string" &&
-		// value2[0] == "#"
-	) {
-		var rgb1 = [
-			value1[1] + value1[2],
-			value1[3] + value1[4],
-			value1[5] + value1[6],
-		];
-		// var rgb2 = [value2[1]+value2[2],value2[3]+value2[4],value2[5]+value2[6]];
-		var [r1, g1, b1] = rgb1.map((element) => {
-			var element = [element[0], element[1]];
-			var number = 0;
-			element.forEach((e) => {
-				let num;
-				if (e === "f" || e === "F") {
-					num = 15;
-				} else if (e === "e" || e === "E") {
-					num = 14;
-				} else if (e === "d" || e === "D") {
-					num = 13;
-				} else if (e === "c" || e === "C") {
-					num = 12;
-				} else if (e === "b" || e === "B") {
-					num = 11;
-				} else if (e === "a" || e === "A") {
-					num = 10;
-				} else {
-					num = parseInt(e);
-				}
-				if (element.indexOf(e) === 1) {
-					num = num * 10;
-				}
-				number = number + num;
-			});
-			return number;
-		});
-		// var [r2,g2,b2] = rgb2.map((element) => {
-		// 	var element = [element[0], element[1]];
-		// 	var number = 0;
-		// 	element.forEach(e => {
-		// 		let num;
-		// 		if (e === "f" || e === "F") {
-		// 			num = 15;
-		// 		} else if (e === "e" || e === "E") {
-		// 			num = 14;
-		// 		} else if (e === "d" || e === "D") {
-		// 			num = 13;
-		// 		} else if (e === "c" || e === "C") {
-		// 			num = 12;
-		// 		} else if (e === "b" || e === "B") {
-		// 			num = 11;
-		// 		} else if (e === "a" || e === "A") {
-		// 			num = 10;
-		// 		}
-		// 		if (element.indexOf(e) === 1) {
-		// 			num = num * 10;
-		// 		}
-		// 		number = number + num;
-		// 	});
-		// 	return number;
-		// });
-		return [r1, g1, b1];
 	}
 }
