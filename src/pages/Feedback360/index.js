@@ -94,7 +94,7 @@ function Teams({ setIndex = () => {}, list = [] }) {
 	}
 }
 
-function Table({ index = 0, links = [], list = [] }) {
+function Table({ index = 0, links = [], list = [], numUsp = 0 }) {
 	const [isLoading, setLoading] = useState(true);
 	const [linksExt, setLinksExt] = useState([]);
 	if (links !== undefined && links.length > 0 && linksExt.length === 0) {
@@ -138,7 +138,10 @@ function Table({ index = 0, links = [], list = [] }) {
 										}
 									);
 									var pessoa = linksExt[idx];
-									const promise = verifyNumUsp(pessoa.sheet);
+									const promise = verifyNumUsp(
+										pessoa.sheet,
+										numUsp
+									);
 									const resp = await promise.then((prom) => {
 										return prom;
 									});
@@ -208,44 +211,9 @@ function TotalList(list, numUsp) {
 					.get()
 					.then(async (sub) => {
 						if (sub.docs.length > 0) {
-							// console.log(
-							// 	"já existe a subcoleção unique no firebase:",
-							// 	sub.docs[0].data().A
-							// );
 							if (verify) {
 								let unq = sub.docs[0].data().A;
 								setResp(unq);
-								// let promises = unq.map((element) => {
-								// 	if (element.respondido !== true) {
-								// 		return verifyNumUsp(
-								// 			element.sheetId,
-								// 			numUsp
-								// 		);
-								// 	} else {
-								// 		return element.respondido;
-								// 	}
-								// });
-								// let unq2 = await Promise.all(promises);
-								// console.log("unq2", unq2);
-								// unq2.forEach((element) => {
-								// 	let obj = unq.find(
-								// 		(e) =>
-								// 			unq.indexOf(e) ===
-								// 			unq2.indexOf(element)
-								// 	);
-								// 	// console.log(
-								// 	// 	element.nome,
-								// 	// 	element.respondido
-								// 	// );
-								// 	if (
-								// 		element !== obj.respondido &&
-								// 		element !== undefined
-								// 	) {
-								// 		unq[unq.indexOf(obj)].respondido =
-								// 			element;
-								// 	}
-								// });
-								// collec.doc().update({ A: unq });
 							}
 						} else if (sub.docs.length === 0) {
 							if (list.length > 0) {
@@ -313,6 +281,7 @@ function TotalList(list, numUsp) {
 	}, [list, arr]);
 	const [verify2, setVerify2] = useState(true);
 	const [resp2, setResp2] = useState([]);
+	const [resp3, setResp3] = useState([]);
 	useEffect(() => {
 		if (resp.length > 0 && verify2) {
 			setVerify2(false);
@@ -329,7 +298,6 @@ function TotalList(list, numUsp) {
 				}
 			});
 			var respProm = await Promise.all(promises);
-			// console.log("respProm", respProm);
 
 			resp2.forEach((element) => {
 				if (respProm[resp2.indexOf(element)] !== undefined) {
@@ -338,34 +306,64 @@ function TotalList(list, numUsp) {
 					element.respondido = false;
 				}
 			});
-			// console.log("resp2", resp2);
-			db.collection("members")
+			// Recalcular list para ajustar o Top() e atualizar a coleção "teams" Firebase
+			list.forEach((e) => {
+				let respondidos = 0;
+				Object.entries(e.pessoas).forEach((pessoa) => {
+					var objInResp2 = resp2.find(
+						(element) => element.nome === pessoa[0]
+					);
+					if (objInResp2.respondido === true) {
+						respondidos = respondidos + 1;
+					}
+				});
+				if (list[list.indexOf(e)].respondidos < respondidos) {
+					list[list.indexOf(e)].respondidos = respondidos;
+					members
+						.doc(myId)
+						.collection("teams")
+						.where("team", "==", e.team)
+						.get()
+						.then((e) => {
+							members
+								.doc(myId)
+								.collection("teams")
+								.doc(e.docs[0].id)
+								.update({ respondidos: respondidos });
+						});
+				}
+			});
+
+			// Atualizar a coleção "unique" Firebase
+			members
 				.doc(myId)
 				.collection("unique")
-				.doc()
-				.update({ A: resp2 });
+				.get()
+				.then((e) => {
+					members
+						.doc(myId)
+						.collection("unique")
+						.doc(e.docs[0].id)
+						.update({ A: resp2 });
+				});
+			setResp3(resp2);
 		}
 	}, [resp2]);
-	if (resp.length > 0) {
-		// let unique = [];
-		// // console.log("resp antes do return", resp);
-		// resp.forEach((element) => {
-		// 	unique.push(element.nome);
-		// });
-		return resp;
+	if (resp3.length > 0) {
+		return { A: resp3, B: list };
 	} else {
-		return [];
+		return { A: resp, B: list };
 	}
 }
 
 function Feedback() {
 	const [index, setIndex] = useState(0);
-	const list = List();
+	var list = List();
 	const [numUsp, setNumUsp] = useState(0);
 	const { width } = useWindowDimensions();
 	var user = firebase.auth().currentUser;
 	var username = user.displayName;
-	const [done, setDone] = useState(0);
+	var done = 0;
 	useEffect(() => {
 		members
 			.where("apelido", "==", username)
@@ -375,38 +373,32 @@ function Feedback() {
 					return doc.data();
 				});
 				const exportData = await Promise.all(promises);
-				setDone(exportData[0].concluido);
 				setNumUsp(exportData[0].nUsp);
 			})
 			.catch((error) => {
 				alert(error);
 			});
 	}, [username]);
-	// const [unique, setUnique] = useState([]);
-	// const [links, setLinks] = useState([]);
-	const links = TotalList(list, numUsp);
+	var total = TotalList(list, numUsp);
+	var links = total.A;
+	var list2 = total.B;
+	list = list2;
 	const unique = [];
 	links.forEach((element) => {
 		unique.push(element.nome);
 	});
-	// useEffect(() => {
-	// 	setUnique(unique);
-	// 	setLinks(links);
-	// }, [list]);
-	// console.log(unique.length, links.length);
+	var respostasUnique = 0;
+	links.forEach((element) => {
+		if (element.respondido) {
+			respostasUnique = respostasUnique + 1;
+		}
+	});
+	if (links.length > 0) {
+		done = Math.floor((respostasUnique * 100) / links.length);
+	}
 	const [contagem, setContagem] = useState(true);
 	if (contagem && unique.length !== 0) {
-		// console.log("unique:", unique);
-		// console.log("links:", links);
-		// console.log("list:", list);
 		setContagem(false);
-		// links.map((element) => {
-		// if (element.respondido === null) {
-		// verifyNumUsp(element.sheet);
-		// console.log(element);
-		// }
-		// 	return;
-		// });
 	}
 	const dias = Dias();
 
@@ -690,9 +682,6 @@ function changeList(i) {
 
 async function verifyNumUsp(docId, numUsp, start = 2, end = 50) {
 	const doc = new GoogleSpreadsheet(docId);
-	// console.log("doc", doc);
-	// console.log("dentro do useEffect");
-	//async () => {
 	try {
 		await doc.useServiceAccountAuth({
 			client_email: feedjson.client_email,
@@ -710,10 +699,7 @@ async function verifyNumUsp(docId, numUsp, start = 2, end = 50) {
 			}
 		}
 		var resp = arr.includes(numUsp);
-		// console.log("verifyNumUsp(): ", resp);
 		return resp;
-		// setTimeout(() => {
-		// }, 300);
 	} catch (e) {
 		console.log(docId, e);
 	}
