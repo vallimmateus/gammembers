@@ -784,7 +784,15 @@ function Feedback() {
 													pra responder
 												</td>
 												<td>
-													<div onClick={() => {}}>
+													<div
+														onClick={() => {
+															window.open(
+																"wiki.gammajrengenharia.com.br",
+																"_blank"
+															);
+														}}
+														rel="noopener noreferrer"
+													>
 														WikiGamma
 													</div>
 												</td>
