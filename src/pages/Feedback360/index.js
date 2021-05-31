@@ -913,10 +913,10 @@ async function verifyNumUsp(docId, numUsp, start = 2, end = 50) {
 
 function Interpolate(value1) {
 	if (
-		typeof value1 == "string" &&
-		value1[0] == "#" &&
-		typeof value2 == "string" &&
-		value2[0] == "#"
+		typeof value1 === "string" &&
+		value1[0] === "#"
+		// typeof value2 == "string" &&
+		// value2[0] == "#"
 	) {
 		var rgb1 = [
 			value1[1] + value1[2],
