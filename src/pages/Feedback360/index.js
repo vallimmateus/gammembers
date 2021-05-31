@@ -910,3 +910,72 @@ async function verifyNumUsp(docId, numUsp, start = 2, end = 50) {
 		console.log(docId, e);
 	}
 }
+
+function Interpolate(value1) {
+	if (
+		typeof value1 == "string" &&
+		value1[0] == "#" &&
+		typeof value2 == "string" &&
+		value2[0] == "#"
+	) {
+		var rgb1 = [
+			value1[1] + value1[2],
+			value1[3] + value1[4],
+			value1[5] + value1[6],
+		];
+		// var rgb2 = [value2[1]+value2[2],value2[3]+value2[4],value2[5]+value2[6]];
+		var [r1, g1, b1] = rgb1.map((element) => {
+			var element = [element[0], element[1]];
+			var number = 0;
+			element.forEach((e) => {
+				let num;
+				if (e === "f" || e === "F") {
+					num = 15;
+				} else if (e === "e" || e === "E") {
+					num = 14;
+				} else if (e === "d" || e === "D") {
+					num = 13;
+				} else if (e === "c" || e === "C") {
+					num = 12;
+				} else if (e === "b" || e === "B") {
+					num = 11;
+				} else if (e === "a" || e === "A") {
+					num = 10;
+				} else {
+					num = parseInt(e);
+				}
+				if (element.indexOf(e) === 1) {
+					num = num * 10;
+				}
+				number = number + num;
+			});
+			return number;
+		});
+		// var [r2,g2,b2] = rgb2.map((element) => {
+		// 	var element = [element[0], element[1]];
+		// 	var number = 0;
+		// 	element.forEach(e => {
+		// 		let num;
+		// 		if (e === "f" || e === "F") {
+		// 			num = 15;
+		// 		} else if (e === "e" || e === "E") {
+		// 			num = 14;
+		// 		} else if (e === "d" || e === "D") {
+		// 			num = 13;
+		// 		} else if (e === "c" || e === "C") {
+		// 			num = 12;
+		// 		} else if (e === "b" || e === "B") {
+		// 			num = 11;
+		// 		} else if (e === "a" || e === "A") {
+		// 			num = 10;
+		// 		}
+		// 		if (element.indexOf(e) === 1) {
+		// 			num = num * 10;
+		// 		}
+		// 		number = number + num;
+		// 	});
+		// 	return number;
+		// });
+		return [r1, g1, b1];
+	}
+}
