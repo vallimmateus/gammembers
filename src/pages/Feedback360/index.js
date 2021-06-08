@@ -577,6 +577,7 @@ function Feedback() {
 			},
 		},
 	];
+	// teste
 	// if (total.A.length !== 0 && total.B.length !== 0) {
 	// 	console.log("A", total.A.length, "B", total.B.length);
 	// links = total.A;
