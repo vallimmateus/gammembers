@@ -226,10 +226,13 @@ function TotalList(list, numUsp) {
 									);
 								});
 								const unq = [...query];
+								console.log(arr);
 								let promises = unq.map((e) => {
 									let obj = arr.find(
 										(element) => element.nome === e
 									);
+									console.log("tentativa do", e);
+									console.log(", o sheetId é", obj.sheet);
 									var sheet = obj.sheet;
 									var sheetId = sheet.slice(
 										sheet.lastIndexOf("/") + 1,
@@ -258,11 +261,13 @@ function TotalList(list, numUsp) {
 								});
 								setResp(unq2);
 							}
-							if (
-								unq2.length > 0 &&
-								typeof unq2[0] === "object"
-							) {
-								collec.add({ A: unq2 });
+							if (typeof unq2 !== "undefined") {
+								if (
+									unq2.length > 0 &&
+									typeof unq2[0] === "object"
+								) {
+									collec.add({ A: unq2 });
+								}
 							}
 						} else {
 							throw new Error();
