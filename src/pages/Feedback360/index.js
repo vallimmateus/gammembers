@@ -8,7 +8,7 @@ import firebase from "firebase";
 import Dots from "./Dots";
 import { members, db } from "../../config/fire";
 import { GoogleSpreadsheet } from "google-spreadsheet";
-import feedjson from "../../config/feedback-360-292622-9ca5e084fa4e.json";
+import { feedjson } from "../../config/fire";
 
 function List() {
 	const [list, setList] = useState([]);
